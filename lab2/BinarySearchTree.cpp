@@ -1,0 +1,95 @@
+#include "BinarySearchTree.h"
+
+struct BinarySearchTree::Node {
+    Key key;
+    Item item;
+    Node* leftChild;
+    Node* rightChild;
+    Node(Key, Item);
+};
+
+BinarySearchTree::BinarySearchTree() {
+    root = nullptr;
+}
+
+BinarySearchTree::Node::Node(Key key, Item item) {
+    this->key = key;
+    this->item = item;
+    this->leftChild = nullptr;
+    this->rightChild = nullptr;
+}
+
+void BinarySearchTree::insert(Key key, Item item) {
+    if (root == nullptr) {
+        root = new Node(key, item);
+        } else {
+        insertRecursive(key, item, root);
+    }
+};
+
+void BinarySearchTree::insertRecursive(Key key, Item item, Node* nodePtr) {
+    if (nodePtr->key == key) {
+        nodePtr->item = item;
+    } else {
+        Node* & child = nodePtr->key > key ? nodePtr->leftChild : nodePtr->rightChild;
+        if (child!=nullptr) {
+            insertRecursive(key, item, child); 
+        }   else  {
+            child = new Node(key, item);
+        }
+    }
+}
+ 
+BinarySearchTree::Item* BinarySearchTree::lookup(Key key){
+    	return lookupRecursive(key, root);
+}
+
+BinarySearchTree::Item* BinarySearchTree::lookupRecursive(Key key, Node* nodePtr){
+    if (nodePtr == nullptr) {
+      return nullptr;
+    } else if (nodePtr->key > key) {
+      return lookupRecursive(key, nodePtr->leftChild);  
+    } else if (nodePtr->key < key) {
+      return lookupRecursive(key, nodePtr->rightChild);  
+    } else {
+      return &nodePtr->item;
+    }
+}
+
+void BinarySearchTree::preOrder(pairconsumer con) {
+    preOrderRecursive(con,root,0);
+}
+
+void BinarySearchTree::preOrderRecursive(pairconsumer con, Node* nodePtr, int gen) {
+    con(nodePtr->item, gen);
+    if (nodePtr->leftChild!=nullptr) preOrderRecursive(con, nodePtr->leftChild, gen+1);
+    else con("Left Leaf", gen+1);
+    if (nodePtr->rightChild!=nullptr) preOrderRecursive(con, nodePtr->rightChild, gen+1);
+    else con("Right Leaf", gen+1);
+}
+
+void BinarySearchTree::inOrder(consumer con) {
+    inOrderRecursive(con,root);
+}
+
+void BinarySearchTree::inOrderRecursive(consumer con, Node* nodePtr) {
+    if (nodePtr->leftChild!=nullptr) inOrderRecursive(con, nodePtr->leftChild);
+    con(nodePtr->item);
+    if (nodePtr->rightChild!=nullptr) inOrderRecursive(con, nodePtr->rightChild);
+}
+
+void BinarySearchTree::postOrder(consumer con) {
+    postOrderRecursive(con,root);
+}
+
+void BinarySearchTree::postOrderRecursive(consumer con, Node* nodePtr) {
+    if (nodePtr->leftChild!=nullptr) postOrderRecursive(con, nodePtr->leftChild);
+    if (nodePtr->rightChild!=nullptr) postOrderRecursive(con, nodePtr->rightChild);
+    con(nodePtr->item);
+}
+
+std::ostream &operator<<(std::ostream & os, const BinarySearchTree & bst){
+    BinarySearchTree tree = bst;
+    tree.inOrder([&](string s) -> void {os<<s+", ";});
+    return os;
+}
