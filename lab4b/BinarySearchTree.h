@@ -2,7 +2,7 @@
 #define _DRH_BST
 #include <string>
 #include <functional>
-using namespace std;
+#include <iostream>
 
 class BinarySearchTree {
    friend std::ostream &operator<<(std::ostream &, const BinarySearchTree &);
@@ -29,7 +29,7 @@ class BinarySearchTree {
         static void preOrderRecursive(pairconsumer, Node*,int);
         static void inOrderRecursive(consumer, Node*);
         static void postOrderRecursive(consumer, Node*);
-        static void removeRecursive(Key, Node*);
+        static void removeRecursive(Key, Node*&);
 };
 
 std::ostream &operator<<(std::ostream &, const BinarySearchTree &);

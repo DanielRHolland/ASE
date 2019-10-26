@@ -1,2 +1,8 @@
 *.out
 *.kdev4
+*/CMakeFiles*
+*/build/*
+*build-lab*
+bsttest
+app
+*/bin/*

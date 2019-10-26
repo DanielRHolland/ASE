@@ -1,5 +1,4 @@
 #include "BinarySearchTree.h"
-#include <iostream>
 
 struct BinarySearchTree::Node {
     Key key;
@@ -58,7 +57,7 @@ BinarySearchTree::Item* BinarySearchTree::lookupRecursive(Key key, Node* nodePtr
 }
 
 void BinarySearchTree::preOrder(pairconsumer con) {
-    preOrderRecursive(con,root,0);
+    if (root!=nullptr) preOrderRecursive(con,root,0);
 }
 
 void BinarySearchTree::preOrderRecursive(pairconsumer con, Node* nodePtr, int gen) {
@@ -70,7 +69,9 @@ void BinarySearchTree::preOrderRecursive(pairconsumer con, Node* nodePtr, int ge
 }
 
 void BinarySearchTree::inOrder(consumer con) {
-    inOrderRecursive(con,root);
+    if (root!=nullptr) {
+        inOrderRecursive(con,root);
+    }
 }
 
 void BinarySearchTree::inOrderRecursive(consumer con, Node* nodePtr) {
@@ -80,7 +81,7 @@ void BinarySearchTree::inOrderRecursive(consumer con, Node* nodePtr) {
 }
 
 void BinarySearchTree::postOrder(consumer con) {
-    postOrderRecursive(con,root);
+    if (root!=nullptr) postOrderRecursive(con,root);
 }
 
 void BinarySearchTree::postOrderRecursive(consumer con, Node* nodePtr) {
@@ -100,10 +101,10 @@ void BinarySearchTree::displayEntries()
 void BinarySearchTree::displayTree()
 {
     this->preOrder([](Node* n,int gen) -> void {
-        string out = to_string(gen)+"| ";
+        std::string out = std::to_string(gen)+"| ";
         for(int i=0; i<gen;i++) out += "      ";
         if (n== nullptr) std::cout << out + "*"<<std::endl;
-        else std::cout << out + to_string(n->key) + ": " + n->item <<std::endl;
+        else std::cout << out + std::to_string(n->key) + ": " + n->item <<std::endl;
     }
     );
     
@@ -111,32 +112,35 @@ void BinarySearchTree::displayTree()
 
 void BinarySearchTree::remove(BinarySearchTree::Key key)
 {
-    return removeRecursive(key,root);
+    if (root!=nullptr) removeRecursive(key,root);
 }
 
-void BinarySearchTree::removeRecursive(Key key, Node* nodePtr) {
-    if (nodePtr!=nullptr) {
-        if (nodePtr->key > key) {
-            if (nodePtr->leftChild != nullptr && nodePtr->leftChild->key == key) {
-                delete nodePtr->leftChild;
-                nodePtr->leftChild = nullptr;
-            }
-            else removeRecursive(key, nodePtr->leftChild);
-        } else if (nodePtr->key < key) {
-            if (nodePtr->rightChild != nullptr &&nodePtr->rightChild->key == key ) {
-                delete nodePtr->rightChild;
-                nodePtr->rightChild = nullptr;
-            }
-            else removeRecursive(key, nodePtr->rightChild);
+void BinarySearchTree::removeRecursive(Key key, Node* &nodePtr) {
+    if (nodePtr->key > key) {
+        if (nodePtr->leftChild != nullptr && nodePtr->leftChild->key == key) {
+            delete nodePtr->leftChild;
+            nodePtr->leftChild = nullptr;
         }
-    }
+        else removeRecursive(key, nodePtr->leftChild);
+    } else if (nodePtr->key < key) {
+        if (nodePtr->rightChild != nullptr &&nodePtr->rightChild->key == key ) {
+            delete nodePtr->rightChild;
+            nodePtr->rightChild = nullptr;
+        }
+        else removeRecursive(key, nodePtr->rightChild);
+    } else {
+        delete nodePtr;
+        nodePtr = nullptr;
+    }    
 }
 
 
 std::ostream &operator<<(std::ostream & os, const BinarySearchTree & bst){
     BinarySearchTree tree = bst;
     tree.inOrder([&](BinarySearchTree::Node* n) -> void {
-        os << to_string(n->key)+": " + n->item+", ";
+        if (n != nullptr) {
+            os << std::to_string(n->key)+": " + n->item+", ";
+        }
     });
     return os;
 }

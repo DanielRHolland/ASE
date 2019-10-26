@@ -1,6 +1,6 @@
 #define BOOST_TEST_MODULE AseLab2
 #include<boost/test/included/unit_test.hpp>
-#include "BinarySearchTree.cpp"
+#include "BinarySearchTree.h"
 
 BOOST_AUTO_TEST_CASE( my_addition_test ) {
     BOOST_CHECK_EQUAL( (1+2) , 3 );
@@ -22,11 +22,26 @@ BOOST_AUTO_TEST_CASE( test_5_inserts_and_lookup  ) {
     BOOST_CHECK_EQUAL( *bst.lookup(23) , "item A" );
 }
 
-BOOST_AUTO_TEST_CASE( test_remove_root) {
+BOOST_AUTO_TEST_CASE( test_remove_root_lone) {
     BinarySearchTree bst;
     bst.insert(23,"item A");
     bst.remove(23);
-    stringstream ss;
+    std::stringstream ss;
     ss << bst;
+    bst.displayTree();
     BOOST_CHECK_EQUAL(ss.str(),"");
 }
+
+
+BOOST_AUTO_TEST_CASE( test_remove_root_singlechild ) {
+    BinarySearchTree bst;
+    bst.insert(23,"item A");
+    bst.insert(12,"item -A");
+    bst.displayTree();
+    bst.remove(23);
+    std::stringstream ss;
+    ss << bst;
+    bst.displayTree();
+    BOOST_CHECK_EQUAL(ss.str(),"12: item -A, ");
+}
+
