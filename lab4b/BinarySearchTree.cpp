@@ -117,23 +117,36 @@ void BinarySearchTree::remove(BinarySearchTree::Key key)
 
 void BinarySearchTree::removeRecursive(Key key, Node* &nodePtr) {
     if (nodePtr->key > key) {
-        if (nodePtr->leftChild != nullptr && nodePtr->leftChild->key == key) {
-            delete nodePtr->leftChild;
-            nodePtr->leftChild = nullptr;
-        }
-        else removeRecursive(key, nodePtr->leftChild);
-    } else if (nodePtr->key < key) {
-        if (nodePtr->rightChild != nullptr &&nodePtr->rightChild->key == key ) {
-            delete nodePtr->rightChild;
-            nodePtr->rightChild = nullptr;
-        }
-        else removeRecursive(key, nodePtr->rightChild);
+        removeRecursive(key, nodePtr->leftChild);
+    } else if (nodePtr->key < key){
+        removeRecursive(key, nodePtr->rightChild);
     } else {
-        delete nodePtr;
-        nodePtr = nullptr;
-    }    
+        //remove node at nodePtr
+        if (nodePtr->rightChild != nullptr && nodePtr->leftChild != nullptr) {
+            Node* detachedNode = detachMinimumNode(nodePtr->rightChild);
+            detachedNode->leftChild = nodePtr->leftChild;
+            detachedNode->rightChild = nodePtr->rightChild;
+            nodePtr = detachedNode;
+        } else if (nodePtr->rightChild != nullptr || nodePtr->leftChild != nullptr) {
+            Node* childPtr = nodePtr->leftChild != nullptr ? nodePtr->leftChild : nodePtr->rightChild;
+            delete nodePtr;
+            nodePtr = childPtr;
+        } else  {
+            delete nodePtr;
+            nodePtr = nullptr;
+        }
+    } 
 }
 
+BinarySearchTree::Node* BinarySearchTree::detachMinimumNode(Node* & nodePtr) {
+    if (nodePtr->leftChild == nullptr) {
+        Node* minimumNodePtr = nodePtr;
+        nodePtr = nodePtr->rightChild;
+        return minimumNodePtr;
+    } else {
+        return detachMinimumNode(nodePtr->leftChild);
+    }
+}
 
 std::ostream &operator<<(std::ostream & os, const BinarySearchTree & bst){
     BinarySearchTree tree = bst;

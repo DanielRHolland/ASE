@@ -32,16 +32,44 @@ BOOST_AUTO_TEST_CASE( test_remove_root_lone) {
     BOOST_CHECK_EQUAL(ss.str(),"");
 }
 
+BOOST_AUTO_TEST_CASE( test_remove_child_singlechild ) {
+    BinarySearchTree bst;
+    bst.insert(23,"item A");
+    bst.insert(12,"item -A");
+    bst.remove(12);
+    std::stringstream ss;
+    ss << bst;
+    BOOST_CHECK_EQUAL(ss.str(),"23: item A, ");
+}
 
 BOOST_AUTO_TEST_CASE( test_remove_root_singlechild ) {
     BinarySearchTree bst;
     bst.insert(23,"item A");
     bst.insert(12,"item -A");
-    bst.displayTree();
     bst.remove(23);
     std::stringstream ss;
     ss << bst;
-    bst.displayTree();
     BOOST_CHECK_EQUAL(ss.str(),"12: item -A, ");
 }
 
+BOOST_AUTO_TEST_CASE( test_remove_child_singlegrandchild ) {
+    BinarySearchTree bst;
+    bst.insert(23,"item A");
+    bst.insert(12,"item -A");
+    bst.insert(2,"item -B");
+    bst.remove(12);
+    std::stringstream ss;
+    ss << bst;
+    BOOST_CHECK_EQUAL(ss.str(),"2: item -B, 23: item A, ");
+}
+
+BOOST_AUTO_TEST_CASE( test_remove_root_twochildren ) {
+    BinarySearchTree bst;
+    bst.insert(23,"item A");
+    bst.insert(12,"item -A");
+    bst.insert(56,"item B");
+    bst.remove(23);
+    std::stringstream ss;
+    ss << bst;
+    BOOST_CHECK_EQUAL(ss.str(),"12: item -A, 56: item B, ");
+}

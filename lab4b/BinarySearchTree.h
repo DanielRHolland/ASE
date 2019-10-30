@@ -29,7 +29,8 @@ class BinarySearchTree {
         static void preOrderRecursive(pairconsumer, Node*,int);
         static void inOrderRecursive(consumer, Node*);
         static void postOrderRecursive(consumer, Node*);
-        static void removeRecursive(Key, Node*&);
+        void removeRecursive(Key, Node*&);
+        static Node* detachMinimumNode(Node* &);
 };
 
 std::ostream &operator<<(std::ostream &, const BinarySearchTree &);
