@@ -4,17 +4,20 @@
 #include <functional>
 #include <iostream>
 
+template <class K, class I>
 class BinarySearchTree {
    friend std::ostream &operator<<(std::ostream &, const BinarySearchTree &);
     public:
-        using Key = int;
-        using Item = std::string;
+        using Key = K;
+        using Item = I;
         void insert(Key, Item); 
         Item* lookup(Key);
         BinarySearchTree();
         void displayEntries();
         void displayTree();
         void remove(Key);
+        void rotateWholeTreeRight();
+        void rotateWholeTreeLeft();
 
     private:
         struct Node;
@@ -31,6 +34,8 @@ class BinarySearchTree {
         static void postOrderRecursive(consumer, Node*);
         void removeRecursive(Key, Node*&);
         static Node* detachMinimumNode(Node* &);
+        static void rotateRight(Node* &);
+        static void rotateLeft(Node* &);
 };
 
 std::ostream &operator<<(std::ostream &, const BinarySearchTree &);

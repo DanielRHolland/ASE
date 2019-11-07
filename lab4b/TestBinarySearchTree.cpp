@@ -73,3 +73,25 @@ BOOST_AUTO_TEST_CASE( test_remove_root_twochildren ) {
     ss << bst;
     BOOST_CHECK_EQUAL(ss.str(),"12: item -A, 56: item B, ");
 }
+
+BOOST_AUTO_TEST_CASE( test_tree_rotate_right_twochildren_maintains_structure ) {
+    BinarySearchTree bst;
+    bst.insert(23,"item A");
+    bst.insert(12,"item -A");
+    bst.insert(56,"item B");
+    bst.rotateWholeTreeRight();
+    std::stringstream ss;
+    ss << bst;
+    BOOST_CHECK_EQUAL(ss.str(),"12: item -A, 23: item A, 56: item B, ");
+}
+
+BOOST_AUTO_TEST_CASE( test_tree_rotate_left_twochildren_maintains_structure ) {
+    BinarySearchTree bst;
+    bst.insert(23,"item A");
+    bst.insert(12,"item -A");
+    bst.insert(56,"item B");
+    bst.rotateWholeTreeLeft();
+    std::stringstream ss;
+    ss << bst;
+    BOOST_CHECK_EQUAL(ss.str(),"12: item -A, 23: item A, 56: item B, ");
+}

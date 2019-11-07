@@ -8,18 +8,19 @@ struct BinarySearchTree::Node {
     Node(Key, Item);
 };
 
-BinarySearchTree::BinarySearchTree() {
+BinarySearchTree<Key,Item>::BinarySearchTree() {
     root = nullptr;
 }
 
-BinarySearchTree::Node::Node(Key key, Item item) {
+BinarySearchTree<Key,Item>::Node::Node(Key key, Item item) {
     this->key = key;
     this->item = item;
     this->leftChild = nullptr;
     this->rightChild = nullptr;
 }
 
-void BinarySearchTree::insert(Key key, Item item) {
+
+void BinarySearchTree<Key,Item>::insert(Key key, Item item) {
     if (root == nullptr) {
         root = new Node(key, item);
         } else {
@@ -27,7 +28,8 @@ void BinarySearchTree::insert(Key key, Item item) {
     }
 };
 
-void BinarySearchTree::insertRecursive(Key key, Item item, Node* nodePtr) {
+
+void BinarySearchTree<Key,Item>::insertRecursive(Key key, Item item, Node* nodePtr) {
     if (nodePtr->key == key) {
         nodePtr->item = item;
     } else {
@@ -40,11 +42,11 @@ void BinarySearchTree::insertRecursive(Key key, Item item, Node* nodePtr) {
     }
 }
  
-BinarySearchTree::Item* BinarySearchTree::lookup(Key key){
+BinarySearchTree<Key,Item>::Item* BinarySearchTree::lookup(Key key){
     	return lookupRecursive(key, root);
 }
 
-BinarySearchTree::Item* BinarySearchTree::lookupRecursive(Key key, Node* nodePtr){
+BinarySearchTree<Key,Item>::Item* BinarySearchTree::lookupRecursive(Key key, Node* nodePtr){
     if (nodePtr == nullptr) {
       return nullptr;
     } else if (nodePtr->key > key) {
@@ -56,11 +58,11 @@ BinarySearchTree::Item* BinarySearchTree::lookupRecursive(Key key, Node* nodePtr
     }
 }
 
-void BinarySearchTree::preOrder(pairconsumer con) {
+void BinarySearchTree<Key,Item>::preOrder(pairconsumer con) {
     if (root!=nullptr) preOrderRecursive(con,root,0);
 }
 
-void BinarySearchTree::preOrderRecursive(pairconsumer con, Node* nodePtr, int gen) {
+void BinarySearchTree<Key,Item>::preOrderRecursive(pairconsumer con, Node* nodePtr, int gen) {
     con(nodePtr, gen);
     if (nodePtr->leftChild!=nullptr) preOrderRecursive(con, nodePtr->leftChild, gen+1);
     else con(nullptr, gen+1);
@@ -68,29 +70,29 @@ void BinarySearchTree::preOrderRecursive(pairconsumer con, Node* nodePtr, int ge
     else con(nullptr, gen+1);
 }
 
-void BinarySearchTree::inOrder(consumer con) {
+void BinarySearchTree<Key,Item>::inOrder(consumer con) {
     if (root!=nullptr) {
         inOrderRecursive(con,root);
     }
 }
 
-void BinarySearchTree::inOrderRecursive(consumer con, Node* nodePtr) {
+void BinarySearchTree<Key,Item>::inOrderRecursive(consumer con, Node* nodePtr) {
     if (nodePtr->leftChild!=nullptr) inOrderRecursive(con, nodePtr->leftChild);
     con(nodePtr);
     if (nodePtr->rightChild!=nullptr) inOrderRecursive(con, nodePtr->rightChild);
 }
 
-void BinarySearchTree::postOrder(consumer con) {
+void BinarySearchTree<Key,Item>::postOrder(consumer con) {
     if (root!=nullptr) postOrderRecursive(con,root);
 }
 
-void BinarySearchTree::postOrderRecursive(consumer con, Node* nodePtr) {
+void BinarySearchTree<Key,Item>::postOrderRecursive(consumer con, Node* nodePtr) {
     if (nodePtr->leftChild!=nullptr) postOrderRecursive(con, nodePtr->leftChild);
     if (nodePtr->rightChild!=nullptr) postOrderRecursive(con, nodePtr->rightChild);
     con(nodePtr);
 }
 
-void BinarySearchTree::displayEntries()
+void BinarySearchTree<Key,Item>::displayEntries()
 {
     this->inOrder([](BinarySearchTree::Node* n) -> void {
         std::cout << n->key << ": " << n->item << std::endl;
@@ -98,7 +100,7 @@ void BinarySearchTree::displayEntries()
                  );
 }
 
-void BinarySearchTree::displayTree()
+void BinarySearchTree<Key,Item>::displayTree()
 {
     this->preOrder([](Node* n,int gen) -> void {
         std::string out = std::to_string(gen)+"| ";
@@ -110,12 +112,12 @@ void BinarySearchTree::displayTree()
     
 }
 
-void BinarySearchTree::remove(BinarySearchTree::Key key)
+void BinarySearchTree<Key,Item>::remove(BinarySearchTree::Key key)
 {
     if (root!=nullptr) removeRecursive(key,root);
 }
 
-void BinarySearchTree::removeRecursive(Key key, Node* &nodePtr) {
+void BinarySearchTree<Key,Item>::removeRecursive(Key key, Node* &nodePtr) {
     if (nodePtr->key > key) {
         removeRecursive(key, nodePtr->leftChild);
     } else if (nodePtr->key < key){
@@ -138,7 +140,7 @@ void BinarySearchTree::removeRecursive(Key key, Node* &nodePtr) {
     } 
 }
 
-BinarySearchTree::Node* BinarySearchTree::detachMinimumNode(Node* & nodePtr) {
+BinarySearchTree<Key,Item>::Node* BinarySearchTree<Key,Item>::detachMinimumNode(Node* & nodePtr) {
     if (nodePtr->leftChild == nullptr) {
         Node* minimumNodePtr = nodePtr;
         nodePtr = nodePtr->rightChild;
@@ -157,3 +159,30 @@ std::ostream &operator<<(std::ostream & os, const BinarySearchTree & bst){
     });
     return os;
 }
+
+void BinarySearchTree<Key,Item>::rotateRight(Node* & localRoot){
+    assert(localroot!=nullptr);// if localroot==nullptr here, root of subtree is null, so cannot be rotated.
+    Node* bPtr = localRoot;
+    assert(bPtr->leftChild!=nullptr);// if lbPtr->leftChild==nullptr here, there is no left subtree, so no change caused by right rotation.
+    localRoot = bPtr->leftChild;
+    bPtr->leftChild = localRoot->rightChild;
+    localRoot->rightChild = bPtr;
+}
+
+void BinarySearchTree<Key,Item>::rotateWholeTreeRight(){
+    rotateRight(root);
+}
+
+void BinarySearchTree<Key,Item>::rotateLeft(Node* & localRoot){
+    assert(localroot!=nullptr);// if localroot==nullptr here, root of subtree is null, so cannot be rotated.
+    Node* aPtr = localRoot;
+    assert(aPtr->rightChild!=nullptr);// if aPtr->rightChild==nullptr here, there is no right subtree, so no change caused by left rotation.
+    localRoot = aPtr->rightChild;
+    aPtr->rightChild = localRoot->leftChild;
+    localRoot->leftChild = aPtr;
+}
+
+void BinarySearchTree<Key,Item>::rotateWholeTreeLeft(){
+    rotateLeft(root);
+}
+
