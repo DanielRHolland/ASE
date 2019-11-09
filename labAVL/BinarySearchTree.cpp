@@ -30,16 +30,24 @@ void BinarySearchTree::insert(Key key, Item item) {
     }
 };
 
-
-void BinarySearchTree::insertRecursive(Key key, Item item, Node* nodePtr) {
+//returns true if height of sub-tree increased
+bool BinarySearchTree::insertRecursive(Key key, Item item, Node* nodePtr) {
     if (nodePtr->key == key) {
         nodePtr->item = item;
     } else {
-        Node* & child = nodePtr->key > key ? nodePtr->leftChild : nodePtr->rightChild;
+        bool isChildOnLeft = nodePtr->key > key;
+        Node* & child = isChildOnLeft ? nodePtr->leftChild : nodePtr->rightChild;
         if (child!=nullptr) {
-            insertRecursive(key, item, child); 
+            //TODO - find why 9:Edward bal fac is -2, should be -1
+            if (insertRecursive(key, item, child) ) {
+                nodePtr->balance += isChildOnLeft ? -1 : 1;
+                assert(nodePtr->balance>=-2 && nodePtr->balance<=2);
+                return nodePtr->balance == 2 || nodePtr->balance == -2;
+            } else return false;
         }   else  {
             child = new Node(key, item);
+            nodePtr->balance += isChildOnLeft ? -1 : 1;
+            return nodePtr->leftChild!=nullptr ^ nodePtr->rightChild!=nullptr;
         }
     }
 }

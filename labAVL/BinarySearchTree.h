@@ -31,7 +31,7 @@ class BinarySearchTree {
         void preOrder(pairconsumer);
         void inOrder(consumer);
         void postOrder(consumer);
-        static void insertRecursive(Key, Item, Node*);
+        static bool insertRecursive(Key, Item, Node*);
         static Item* lookupRecursive(Key, Node*);
         static void preOrderRecursive(pairconsumer, Node*,int);
         static void inOrderRecursive(consumer, Node*);

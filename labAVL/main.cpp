@@ -24,17 +24,18 @@ int main() {
     
     
 
-    cout << bst << endl;
+    // cout << bst << endl;
 
     bst.displayEntries();
-    bst.setTreeBalance();
-    bst.displayTree();
-    bst.rotateWholeTreeLeft();
-    bst.displayTree();
-    // bst.rotateWholeTreeRight();
+    // bst.setTreeBalance();
     // bst.displayTree();
-    cout << bst.rebalanceRoot() << endl;
+    // bst.rotateWholeTreeLeft();
+    // bst.displayTree();
+    // bst.rotateWholeTreeRight();
     bst.displayTree();
+
+    // cout << bst.rebalanceRoot() << endl;
+    // bst.displayTree();
     
 	return 0;
 }
