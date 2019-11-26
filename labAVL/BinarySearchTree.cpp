@@ -41,8 +41,8 @@ bool BinarySearchTree::insertRecursive(Key key, Item item, Node* nodePtr) {
             //TODO - find why 9:Edward bal fac is -2, should be -1
             if (insertRecursive(key, item, child) ) {
                 nodePtr->balance += isChildOnLeft ? -1 : 1;
-                assert(nodePtr->balance>=-2 && nodePtr->balance<=2);
-                return nodePtr->balance == 2 || nodePtr->balance == -2;
+                assert(nodePtr->balance>=-2 && nodePtr->balance<=2); //TODO - Fix so that it uses algorithm in AVL Lec notes
+                return nodePtr->balance == 1 || nodePtr->balance == -1;
             } else return false;
         }   else  {
             child = new Node(key, item);
