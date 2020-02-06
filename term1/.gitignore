@@ -1,0 +1,11 @@
+**.o
+**qmake.stash
+**.idea
+**cmake-build-debug
+**.out
+**bin
+**build
+**CMakeFiles
+**.kdev4
+**.vscode
+
