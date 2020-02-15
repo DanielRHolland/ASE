@@ -114,7 +114,10 @@ BOOST_AUTO_TEST_CASE( remove_false_if_k_did_not_exist ) {
 //Furthermore, to achieve a high grade for this task, your dictionary implementation should also:
 //• not introduce any memory leaks;
 //• provide a copy constructor and copy assignment operator that make a deep copy;
+
+
 //• provide an efficient move constructor and move assignment operator ;
+
 //• use template parameters to be parametrically polymorphic in the type of its keys and items;
 //• provide a higher-order member function ‘removeIf()’, such that after a call of ‘removeIf(p)’,
 //every key ‘k’ for which ‘p(k)’ returns ‘true’ is considered to be absent.
