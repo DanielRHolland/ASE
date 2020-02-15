@@ -4,3 +4,5 @@ project(ASECoursework)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(ASECoursework main.cpp)
+
+add_executable(Test TestDictionary.cpp)
