@@ -93,7 +93,7 @@ namespace Containers {
 
     template<class K, class I>
     int Dictionary<K, I>::removeIf(Predicate p) {
-        int tally = 0;
+        int numberRemoved = 0;
         for (Node<K,I> *n = first, *parent = nullptr; n != nullptr ; parent = n, n = n->next ) {
             if (p(n->key)) {
                 if (parent == nullptr) {
@@ -103,10 +103,10 @@ namespace Containers {
                     parent->next = n->next;
                     delete n;
                 }
-                tally++;
+                numberRemoved++;
             }
         }
-        return tally;
+        return numberRemoved;
     }
 }
 

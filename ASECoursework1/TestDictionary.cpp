@@ -128,11 +128,12 @@ BOOST_AUTO_TEST_CASE( removeIf_removes_if_predicate ) {
     dict.insert(2,"whatever");
     dict.insert(4, "qwerty");
     dict.insert(213, "uiop[]");
-    dict.removeIf( [](int x)->bool {return x%2==0;}); //predicate checks if divisible by 2
+    int numberRemoved = dict.removeIf( [](int x)->bool {return x%2==0;}); //predicate checks if divisible by 2
     BOOST_CHECK_NE(dict.lookup(1), nullptr);
     BOOST_CHECK_EQUAL(dict.lookup(2), nullptr);
     BOOST_CHECK_EQUAL(dict.lookup(4), nullptr);
     BOOST_CHECK_NE(dict.lookup(213), nullptr);
+    BOOST_CHECK_EQUAL(numberRemoved, 2);
 }
 
 
