@@ -92,8 +92,21 @@ namespace Containers {
     }
 
     template<class K, class I>
-    int Dictionary<K, I>::removeIf(Predicate) {
-        return 0;
+    int Dictionary<K, I>::removeIf(Predicate p) {
+        int tally = 0;
+        for (Node<K,I> *n = first, *parent = nullptr; n != nullptr ; parent = n, n = n->next ) {
+            if (p(n->key)) {
+                if (parent == nullptr) {
+                    first = n->next;
+                    delete n;
+                } else {
+                    parent->next = n->next;
+                    delete n;
+                }
+                tally++;
+            }
+        }
+        return tally;
     }
 }
 
