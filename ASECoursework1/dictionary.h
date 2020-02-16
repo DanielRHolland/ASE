@@ -13,6 +13,7 @@ namespace Containers {
         using Item = I;// ... must support at least std::string
         typedef std::function<bool(Key)> Predicate;
         Dictionary();
+        Dictionary(const Dictionary &);
         ~Dictionary();
 
         bool insert(Key, Item);
@@ -25,7 +26,6 @@ namespace Containers {
 
     private:
         Node<Key,Item> *first;
-
     };
 
     template <class K, class I>
@@ -99,6 +99,11 @@ namespace Containers {
             delete toRemove;
         }
     }
+
+    template<class K, class I>
+    Dictionary<K, I>::Dictionary(const Dictionary & old) {
+        first = new Node<K,I>(*old.first);
+    }
 }
 
 
@@ -109,4 +114,6 @@ namespace Containers {
  * - return value of removeIf?
  * - proper-ness of for loops as whiles + declarations?
  * - any need to store in order?
+ * - copy should preserve structure?
+ * - Node recursive copy constructor Vs deepcopy function in dictionary
 */

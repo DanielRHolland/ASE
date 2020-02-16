@@ -137,15 +137,24 @@ BOOST_AUTO_TEST_CASE( removeIf_removes_if_predicate ) {
 }
 
 
-//BOOST_AUTO_TEST_CASE( test_remove_root) {
-//    Dictionary<int, string> bst;
-//    bst.insert(23,"item A");
-//    bst.remove(23);
-//    stringstream ss;
-//    ss << bst;
-//    BOOST_CHECK_EQUAL(ss.str(),"");
-//}
 
+BOOST_AUTO_TEST_CASE( test_copy_constructor_deep_copies  ) {
+    Dictionary<int, string> dict;
+    dict.insert(23, "item A");
+    dict.insert(12, "item -A");
+    dict.insert(56, "item B");
+    dict.insert(2, "item -B");
+    dict.insert(232, "item C");
+    BOOST_CHECK_NE(dict.lookup(23), nullptr);
+    BOOST_CHECK_EQUAL(*dict.lookup(23) , "item A" );
+    Dictionary<int, string> dict2 = Dictionary<int, string>(dict);
+    BOOST_CHECK_NE(dict.lookup(23), nullptr);
+    BOOST_CHECK_EQUAL(*dict.lookup(23) , "item A" );
+    BOOST_CHECK_NE(dict.lookup(56), nullptr);
+    BOOST_CHECK_EQUAL(*dict.lookup(56) , "item B" );
+}
+
+// Check move moves
 
 // extra tests
 // add/remove front, middle, end

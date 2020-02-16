@@ -8,6 +8,7 @@ namespace Containers {
         K key;
         I item;
         Node(K k, I i);
+        Node(const Node &);
         Node<K,I> *next;
     };
 
@@ -16,6 +17,13 @@ namespace Containers {
         key = k;
         item = i;
         next = nullptr;
+    }
+
+    template<class K, class I>
+    Node<K, I>::Node(const Node<K,I> & old) {
+        key = old.key;
+        item = old.item;
+        next = old.next == nullptr ? nullptr : new Node(*old.next);
     }
 }
 
