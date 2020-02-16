@@ -15,17 +15,16 @@ namespace Containers {
         Dictionary();
         Dictionary(const Dictionary &);
         ~Dictionary();
-
         bool insert(Key, Item);
-
         Item *lookup(Key);
-
         bool remove(Key);
-
         int removeIf(Predicate);
+        Dictionary & operator=(const Dictionary &);
+
 
     private:
         Node<Key,Item> *first;
+        void removeNodes(Node<Key, Item>*);
     };
 
     template <class K, class I>
@@ -93,16 +92,33 @@ namespace Containers {
 
     template<class K, class I>
     Dictionary<K, I>::~Dictionary() {
-        for (Node<K,I> *n = first, *toRemove; n != nullptr;) {
-            toRemove = n;
-            n = n->next;
-            delete toRemove;
-        }
+        removeNodes(first);
     }
 
     template<class K, class I>
-    Dictionary<K, I>::Dictionary(const Dictionary & old) {
-        first = new Node<K,I>(*old.first);
+    Dictionary<K, I>::Dictionary(const Dictionary & original) {
+        first = new Node<K,I>(*original.first);
+    }
+
+    template<class K, class I>
+    Dictionary<K,I> &Dictionary<K, I>::operator=(const Dictionary & original ) {
+        removeNodes(first);
+        first = new Node<K,I>(*original.first);
+        return *this;
+    }
+
+    template<class K, class I>
+    void Dictionary<K, I>::removeNodes(Node<Key, Item> * n) {
+        if (n != nullptr) {
+            removeNodes(n->next);
+            delete n;
+        }
+
+//        for (Node<K,I> *n = first, *toRemove; n != nullptr;) {
+//            toRemove = n;
+//            n = n->next;
+//            delete toRemove;
+//        }
     }
 }
 
@@ -116,4 +132,8 @@ namespace Containers {
  * - any need to store in order?
  * - copy should preserve structure?
  * - Node recursive copy constructor Vs deepcopy function in dictionary
-*/
+ *
+ *
+ * ToDo:
+ * - de-recursive-ify things to prevent stack overflows
+ */

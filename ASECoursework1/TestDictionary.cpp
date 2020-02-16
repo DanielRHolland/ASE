@@ -145,13 +145,41 @@ BOOST_AUTO_TEST_CASE( test_copy_constructor_deep_copies  ) {
     dict.insert(56, "item B");
     dict.insert(2, "item -B");
     dict.insert(232, "item C");
-    BOOST_CHECK_NE(dict.lookup(23), nullptr);
-    BOOST_CHECK_EQUAL(*dict.lookup(23) , "item A" );
     Dictionary<int, string> dict2 = Dictionary<int, string>(dict);
-    BOOST_CHECK_NE(dict.lookup(23), nullptr);
-    BOOST_CHECK_EQUAL(*dict.lookup(23) , "item A" );
-    BOOST_CHECK_NE(dict.lookup(56), nullptr);
-    BOOST_CHECK_EQUAL(*dict.lookup(56) , "item B" );
+    BOOST_CHECK_NE(dict2.lookup(23), nullptr);
+    BOOST_CHECK_EQUAL(*dict2.lookup(23) , "item A" );
+    BOOST_CHECK_NE(dict2.lookup(56), nullptr);
+    BOOST_CHECK_EQUAL(*dict2.lookup(56) , "item B" );
+    BOOST_CHECK_EQUAL(*dict2.lookup(23), *dict.lookup(23));
+}
+
+BOOST_AUTO_TEST_CASE( test_copy_assignment_deep_copies  ) {
+    Dictionary<int, string> dict;
+    dict.insert(23, "item A");
+    dict.insert(12, "item -A");
+    dict.insert(56, "item B");
+    dict.insert(2, "item -B");
+    dict.insert(232, "item C");
+    Dictionary<int, string> dict2 = dict;
+    BOOST_CHECK_NE(dict2.lookup(23), nullptr);
+    BOOST_CHECK_EQUAL(*dict2.lookup(23) , "item A" );
+    BOOST_CHECK_NE(dict2.lookup(56), nullptr);
+    BOOST_CHECK_EQUAL(*dict2.lookup(56) , "item B" );
+    BOOST_CHECK_NE(dict2.lookup(23), dict.lookup(23));
+    BOOST_CHECK_EQUAL(*dict2.lookup(23), *dict.lookup(23));
+}
+
+BOOST_AUTO_TEST_CASE( test_copy_assignment_returns_lhs  ) {
+    Dictionary<int, string> dict;
+    dict.insert(23, "item A");
+    dict.insert(12, "item -A");
+    dict.insert(56, "item B");
+    dict.insert(2, "item -B");
+    dict.insert(232, "item C");
+    Dictionary<int, string> dict2;
+    Dictionary<int, string> dict3 = ( dict2 = dict);
+    BOOST_CHECK_EQUAL(*dict2.lookup(23), *dict.lookup(23));
+    BOOST_CHECK_EQUAL(*dict3.lookup(23), *dict.lookup(23));
 }
 
 // Check move moves
