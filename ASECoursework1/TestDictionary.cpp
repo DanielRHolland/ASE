@@ -184,6 +184,20 @@ BOOST_AUTO_TEST_CASE( test_copy_assignment_returns_lhs  ) {
 
 // Check move moves
 
+BOOST_AUTO_TEST_CASE( test_move_constructor_moves ) {
+    Dictionary<int, string> dict;
+    dict.insert(23, "item A");
+    dict.insert(12, "item -A");
+    dict.insert(56, "item B");
+    dict.insert(2, "item -B");
+    dict.insert(232, "item C");
+    BOOST_CHECK_EQUAL(*dict.lookup(23) , "item A" );
+    Dictionary<int, string> dict2 = std::move(dict);
+    BOOST_CHECK_EQUAL(dict.lookup(23) , nullptr );
+    BOOST_CHECK_EQUAL(*dict2.lookup(23) , "item A" );
+}
+
+
 // extra tests
 // add/remove front, middle, end
 // Different types for key and item

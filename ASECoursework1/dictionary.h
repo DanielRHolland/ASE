@@ -14,12 +14,14 @@ namespace Containers {
         typedef std::function<bool(Key)> Predicate;
         Dictionary();
         Dictionary(const Dictionary &);
+        Dictionary(Dictionary&&) noexcept;
         ~Dictionary();
         bool insert(Key, Item);
         Item *lookup(Key);
         bool remove(Key);
         int removeIf(Predicate);
         Dictionary & operator=(const Dictionary &);
+        Dictionary & operator=(Dictionary&& other) noexcept;
 
 
     private:
@@ -119,6 +121,19 @@ namespace Containers {
 //            n = n->next;
 //            delete toRemove;
 //        }
+    }
+
+    template<class K, class I>
+    Dictionary<K, I>::Dictionary(Dictionary && other) noexcept {
+        first = std::move(other.first);
+        other.first = nullptr;
+    }
+
+    template<class K, class I>
+    Dictionary<K,I> &Dictionary<K, I>::operator=(Dictionary &&other) noexcept {
+        first = std::move(other.first);
+        other.first = nullptr;
+        return *this;
     }
 }
 

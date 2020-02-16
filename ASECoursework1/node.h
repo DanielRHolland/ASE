@@ -9,6 +9,7 @@ namespace Containers {
         I item;
         Node(K k, I i);
         Node(const Node &);
+        Node(Node &&);
         Node<K,I> *next;
     };
 
@@ -24,6 +25,13 @@ namespace Containers {
         key = old.key;
         item = old.item;
         next = old.next == nullptr ? nullptr : new Node(*old.next);
+    }
+
+    template<class K, class I>
+    Node<K, I>::Node(Node && original) {
+        key = std::move(original.key);
+        item = std::move(original.item);
+        next = original.next == nullptr ? nullptr : std::move(original.next);
     }
 }
 
