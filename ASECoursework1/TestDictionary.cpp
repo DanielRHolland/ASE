@@ -145,3 +145,8 @@ BOOST_AUTO_TEST_CASE( removeIf_removes_if_predicate ) {
 //    ss << bst;
 //    BOOST_CHECK_EQUAL(ss.str(),"");
 //}
+
+
+// extra tests
+// add/remove front, middle, end
+// Different types for key and item

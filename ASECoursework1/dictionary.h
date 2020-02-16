@@ -13,6 +13,7 @@ namespace Containers {
         using Item = I;// ... must support at least std::string
         typedef std::function<bool(Key)> Predicate;
         Dictionary();
+        ~Dictionary();
 
         bool insert(Key, Item);
 
@@ -34,33 +35,16 @@ namespace Containers {
 
     template<class K, class I>
     bool Dictionary<K, I>::insert(Key k, Item i) {
-        if (first == nullptr) {
-            first = new Node<K,I>(k,i);
-            return false;
-        } else if (first->key > k){
-            Node<K,I> *newNode = new Node<K,I>(k,i);
-            newNode->next = first;
-            first = newNode;
-            return false;
-        } else if (first->key == k) {
-            first->item = i;
-            return true;
-        } else {
-            for (Node<K,I> *n = first;; n = n->next ) {
-                if (n->next == nullptr) {
-                    n->next = new Node<K, I>(k, i);
-                    return false;
-                } else if (n->next->key > k) {
-                    Node<K,I> *newNode = new Node<K,I>(k,i);
-                    newNode->next = n->next;
-                    n->next = newNode;
-                    return false;
-                } else if (n->next->key == k) {
-                    n->next->item = i;
-                    return true;
-                }
+        for (Node<K,I> *n = first; n != nullptr; n = n->next ) {
+            if (n->key == k) {
+                n->item = i;
+                return true;
             }
         }
+        Node<K,I> *newNode = new Node<K,I>(k,i);
+        newNode->next = first;
+        first = newNode;
+        return false;
     }
 
     template<class K, class I>
@@ -80,11 +64,10 @@ namespace Containers {
             if (n->key == k) {
                 if (parent == nullptr) {
                     first = n->next;
-                    delete n;
                 } else {
                     parent->next = n->next;
-                    delete n;
                 }
+                delete n;
                 return true;
             }
         }
@@ -94,21 +77,37 @@ namespace Containers {
     template<class K, class I>
     int Dictionary<K, I>::removeIf(Predicate p) {
         int numberRemoved = 0;
-        for (Node<K,I> *n = first, *parent = nullptr; n != nullptr ; parent = n, n = n->next ) {
+        for (Node<K,I> *n = first, *parent = nullptr; n != nullptr ; ) {
             if (p(n->key)) {
-                if (parent == nullptr) {
-                    first = n->next;
-                    delete n;
-                } else {
-                    parent->next = n->next;
-                    delete n;
-                }
+                Node<K,I> *&ptrToNext = parent == nullptr ? first : parent->next;
+                ptrToNext = n->next;
+                delete n;
+                n = ptrToNext;
                 numberRemoved++;
+            } else {
+                parent = n;
+                n = n->next;
             }
         }
         return numberRemoved;
+    }
+
+    template<class K, class I>
+    Dictionary<K, I>::~Dictionary() {
+        for (Node<K,I> *n = first, *toRemove; n != nullptr;) {
+            toRemove = n;
+            n = n->next;
+            delete toRemove;
+        }
     }
 }
 
 
 #endif //ASECOURSEWORK_DICTIONARY_H
+
+/*
+ * Questions:
+ * - return value of removeIf?
+ * - proper-ness of for loops as whiles + declarations?
+ * - any need to store in order?
+*/
