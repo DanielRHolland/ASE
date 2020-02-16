@@ -49,13 +49,12 @@ namespace Containers {
 
     template<class K, class I>
     I* Dictionary<K, I>::lookup(Key k) {
-        for (Node<K,I> *n = first; ; n = n->next ) {
-            if (n == nullptr){
-                return nullptr;
-            } else if (n->key == k) {
+        for (Node<K,I> *n = first; n != nullptr; n = n->next ) {
+            if (n->key == k) {
                 return &n->item;
             }
         }
+        return nullptr;
     }
 
     template<class K, class I>
