@@ -26,7 +26,8 @@ namespace Containers {
 
     private:
         Node<Key,Item> *first;
-        void removeNodes(Node<Key, Item>*);
+        void removeNodes();
+        Node<Key,Item>* copyNodes(Node<Key, Item> *);
     };
 
     template <class K, class I>
@@ -94,46 +95,53 @@ namespace Containers {
 
     template<class K, class I>
     Dictionary<K, I>::~Dictionary() {
-        removeNodes(first);
+        removeNodes();
     }
 
     template<class K, class I>
     Dictionary<K, I>::Dictionary(const Dictionary & original) {
-        first = new Node<K,I>(*original.first);
+        first = copyNodes(original.first);
     }
 
     template<class K, class I>
     Dictionary<K,I> &Dictionary<K, I>::operator=(const Dictionary & original ) {
-        removeNodes(first);
-        first = new Node<K,I>(*original.first);
+        removeNodes();
+        first = copyNodes(original.first);
         return *this;
     }
 
     template<class K, class I>
-    void Dictionary<K, I>::removeNodes(Node<Key, Item> * n) {
-        if (n != nullptr) {
-            removeNodes(n->next);
-            delete n;
+    void Dictionary<K, I>::removeNodes() {
+        for (Node<K,I> *toRemove = first, *n = first; toRemove != nullptr; toRemove = n) {
+            n = n->next;
+            delete toRemove;
         }
-
-//        for (Node<K,I> *n = first, *toRemove; n != nullptr;) {
-//            toRemove = n;
-//            n = n->next;
-//            delete toRemove;
-//        }
     }
 
     template<class K, class I>
     Dictionary<K, I>::Dictionary(Dictionary && other) noexcept {
-        first = std::move(other.first);
+        first = other.first;
         other.first = nullptr;
     }
 
     template<class K, class I>
     Dictionary<K,I> &Dictionary<K, I>::operator=(Dictionary &&other) noexcept {
-        first = std::move(other.first);
+        first = other.first;
         other.first = nullptr;
         return *this;
+    }
+
+    template<class K, class I>
+    Node<K,I>* Dictionary<K, I>::copyNodes(Node<K, I> *old) {
+        if (old != nullptr) {
+            Node<K, I> *front = new Node<K, I>(*old);
+            for (Node<K, I> *n = front; old->next != nullptr; old = old->next, n = n->next) {
+                n->next = new Node<K, I>(*old->next);
+            }
+            return front;
+        } else {
+            return nullptr;
+        }
     }
 }
 
@@ -145,10 +153,6 @@ namespace Containers {
  * - return value of removeIf?
  * - proper-ness of for loops as whiles + declarations?
  * - any need to store in order?
- * - copy should preserve structure?
- * - Node recursive copy constructor Vs deepcopy function in dictionary
+ * - copy should preserve structure/order?
  *
- *
- * ToDo:
- * - de-recursive-ify things to prevent stack overflows
  */
