@@ -1,0 +1,66 @@
+html {
+  font-size: 100%;
+  overflow-y: scroll;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  color: #444;
+  font-family: Verdana;
+  font-size: 10pt;
+  line-height: 1.5;
+  padding: 1em;
+  margin: auto;
+  /*max-width: 42em;*/
+}
+
+p {
+  line-height: 2;
+}
+
+h1, h2, h3, h4 {
+  text-align: left;
+  color: #111;
+  /*margin: auto;*/
+  /*margin-top: 2em;*/
+  font-weight: normal;
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 14pt;
+}
+
+h2 {
+  font-size: 13pt;
+}
+
+h3 {
+  font-size: 12pt;
+}
+
+h4 {
+  font-size: 12pt;
+}
+
+ul, ol {
+  font-size: 10pt;
+  line-height: 1.5;
+}
+
+figcaption {
+  font-weight: bold;
+}
+
+.abstract {
+  line-height: 1.5;
+}
+
+.title, h6 {
+  text-align: center;
+  font-size: 40pt;
+}
