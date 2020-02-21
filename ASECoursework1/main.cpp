@@ -64,7 +64,7 @@ ListOfPositionedNames onePass(ListOfNamePairs F, ListOfPositionedNames G, int N,
             std::cout << " result : i" << std::endl;
         } //       ii) If x 0 = y 0 , output (y − t, x) to G 0 and advance files F and G.
         else if (gi!=G.end() && fi->second == gi->second) {
-            gPrime.push_back(PosName(N-t, gi->second));
+            gPrime.push_back(PosName(gi->first-t, fi->first));
             fi++;gi++;
             std::cout << " result : ii" << std::endl;
         } //      iii) If x 0 > y 0 , advance file G.
@@ -92,7 +92,7 @@ ListOfPositionedNames onePass(ListOfNamePairs F, ListOfPositionedNames G, int N,
     if (!fPrime.empty()) {
         assert(t<40);
         std::cout << " recursing...." << std::endl;
-        return onePass(fPrime, gPrime, t*2);
+        return onePass(fPrime, gPrime, N,t*2);
     }
     return gPrime;
 }
