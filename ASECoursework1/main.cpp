@@ -6,6 +6,7 @@
 #include <utility>
 #include <algorithm>
 #include <functional>
+#include <assert.h>
 
 using NamePair = std::pair<std::string,std::string>;
 using ListOfNamePairs = std::list<NamePair>;
@@ -38,6 +39,47 @@ ListOfNamePairs readFile(std::string fileName) {
     std::cout << "\n-------------\n";
     return listOfNamePairs;
 }
+
+
+
+ListOfPositionedNames onePass(ListOfNamePairs F, ListOfPositionedNames &G, int t = 2) {//ditch by ref pass
+    ListOfNamePairs H (F);
+    F.sort([](NamePair np, NamePair np2) { return np.first < np2.first ;});
+    H.sort([](NamePair np, NamePair np2) { return np.second < np2.second; });
+    G.sort([](PosName pn, PosName pn2) { return pn.second < pn2.second; });
+    ListOfNamePairs fPrime;
+    auto gi = G.begin();
+    for (auto fi = F.begin(),hi = H.begin(); fi!=F.end();) {
+        assert(gi != G.end());
+        assert(hi != H.end());
+        assert(fi != F.end());
+        std::cout << gi->first << gi->second << std::endl;
+//        i) If x 0 = z, output (x, z 0 ) to F 0 and advance files F and H.
+        if (fi->second == hi->first) {
+            fPrime.push_back(NamePair(fi->first, hi->second));
+        } //       ii) If x 0 = y 0 , output (y − t, x) to G 0 and advance files F and G.
+        else if (fi->second == gi->second) {
+            fi++;
+            gi++;
+        } //      iii) If x 0 > y 0 , advance file G.
+        else if (fi->second > gi->second) {
+            gi++;
+        }
+//       iv) If x 0 > z, advance file H.
+        else if (fi->second > hi->first) {
+            hi++;
+        } else {
+            assert(false);
+        }
+    }
+    std::cout << "t:" << t << std::endl;
+    if (!fPrime.empty()) {
+        assert(t<40);
+        return onePass(fPrime, G, t*2);
+    }
+    return G;
+}
+
 
 int serialAlgorithm() {
 //    ListOfNamePairs listOfNamePairs = readFile("./Cswk1-Basket_of_Names-test_data/Basket_of_Names-test_data/20/input-papers-20.txt");
@@ -92,7 +134,17 @@ int serialAlgorithm() {
     }
     std::cout << "xn-1: " << xnminus1xn.first <<  ", xn: " << xnminus1xn.second << "\n";
     std::cout << "x1: " << x1x2.first <<  ", x2: " << x1x2.second << "\n";
-    std::cout << "\nend";
+    std::cout << "\nstart onePass:";
+
+    onePass(xXPlus2, posNames);
+
+
+    posNames.sort([](PosName pn, PosName pn2) { return pn.first < pn2.first; });
+
+    for ( auto i = posNames.begin();  i != posNames.end() ; i++) {
+        std::cout << "  " << i->second;
+    }
+
     return 0;
 }
 
