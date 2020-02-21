@@ -13,29 +13,27 @@ using ListOfNamePairs = std::list<NamePair>;
 using PosName = std::pair<int, std::string>;
 using ListOfPositionedNames = std::list<PosName>;
 
+bool loud = false;
+
 ListOfNamePairs readFile(std::string fileName) {
     ListOfNamePairs listOfNamePairs;
     std::string name1;
     std::string name2;
     std::ifstream file (fileName);
-    std::cout<< fileName;
+    if (loud) {std::cout<< fileName;
     while (getline(file, name1)) {
         std::cout<< name1 << std::endl;
-    }
+    }}
     file.close();
 
     file.open(fileName);
     if (file.is_open()) {
         while ( getline (file, name1, ',') ) {
-            std::cout<< name1;
             getline(file, name2);
-            std::cout << "::" << name2 << std::endl;
             listOfNamePairs.push_back( NamePair(name1, name2));
-            std::cout<< name1 << "::"<< name2 <<  std::endl;
         }
         file.close();
     } else std::cout << "Unable to open file";
-    std::cout << "\n-------------\n";
     return listOfNamePairs;
 }
 
@@ -53,45 +51,48 @@ ListOfPositionedNames onePass(ListOfNamePairs F, ListOfPositionedNames G, int N,
 
         assert(hi != H.end());
         assert(fi != F.end());
-        std::cout << " f: " << fi->first << " " << fi->second;
-        if (gi != G.end()) std::cout << "\t| g: " << gi->first << " " << gi->second;
-        else std::cout << " |\t\t  ";
-        std::cout << "\t| h: " << hi->first << " " << hi->second << " \t|";
+        if (loud) {
+            std::cout << " f: " << fi->first << " " << fi->second;
+            if (gi != G.end()) std::cout << "\t| g: " << gi->first << " " << gi->second;
+            else std::cout << " |\t\t  ";
+            std::cout << "\t| h: " << hi->first << " " << hi->second << " \t|";
+        }
 //        i) If x 0 = z, output (x, z 0 ) to F 0 and advance files F and H.
         if (fi->second == hi->first) {
             fPrime.push_back(NamePair(fi->first, hi->second));
             fi++; hi++;
-            std::cout << " result : i" << std::endl;
+            if (loud) std::cout << " result : i" << std::endl;
         } //       ii) If x 0 = y 0 , output (y − t, x) to G 0 and advance files F and G.
         else if (gi!=G.end() && fi->second == gi->second) {
             gPrime.push_back(PosName(gi->first-t, fi->first));
             fi++;gi++;
-            std::cout << " result : ii" << std::endl;
+            if (loud) std::cout << " result : ii" << std::endl;
         } //      iii) If x 0 > y 0 , advance file G.
         else if (gi!=G.end() && fi->second > gi->second) {
             gi++;
-            std::cout << " result : iii" << std::endl;
+            if (loud) std::cout << " result : iii" << std::endl;
         }
 //       iv) If x 0 > z, advance file H.
         else if (fi->second > hi->first) {
             hi++;
-            std::cout << " result : iv" << std::endl;
+            if (loud) std::cout << " result : iv" << std::endl;
         } else {
             assert(false);
         }
     }
-    for (auto i = fPrime.begin(); i != fPrime.end(); i++) {
-        std::cout << i->first + ":" + i->second + ",";
+    if (loud) {
+        for (auto i = fPrime.begin(); i != fPrime.end(); i++) {
+            std::cout << i->first + ":" + i->second + ",";
+        }
+        std::cout << std::endl;
+        for (auto i = gPrime.begin(); i != gPrime.end(); i++) {
+            std::cout << i->first << ":" << i->second + ",";
+        }
+        std::cout << std::endl;
+        std::cout << "t:" << t << std::endl;
     }
-    std::cout << std::endl;
-    for (auto i = gPrime.begin(); i != gPrime.end(); i++) {
-        std::cout << i->first << ":" << i->second + ",";
-    }
-    std::cout << std::endl;
-    std::cout << "t:" << t << std::endl;
     if (!fPrime.empty()) {
-        assert(t<40);
-        std::cout << " recursing...." << std::endl;
+        if (loud) std::cout << " recursing...." << std::endl;
         return onePass(fPrime, gPrime, N,t*2);
     }
     return gPrime;
@@ -99,11 +100,12 @@ ListOfPositionedNames onePass(ListOfNamePairs F, ListOfPositionedNames G, int N,
 
 
 int serialAlgorithm() {
-//    ListOfNamePairs H = readFile("./Cswk1-Basket_of_Names-test_data/Basket_of_Names-test_data/20/input-papers-20.txt");
-    ListOfNamePairs H = readFile("/home/dan/Desktop/Sync/uni/ASE/ASECoursework1/in.txt");
+    std::string num = "20";
+    ListOfNamePairs H = readFile("/home/dan/Desktop/Sync/uni/ASE/ASECoursework1/Cswk1-Basket_of_Names-test_data/Basket_of_Names-test_data/"+num+"/input-papers-"+num+".txt");
+//    ListOfNamePairs H = readFile("/home/dan/Desktop/Sync/uni/ASE/ASECoursework1/in.txt");
     int N = H.size()+1;
     ListOfNamePairs F (H);
-    for (auto i = H.begin(); i != H.end(); i++) {
+    for (auto i = H.begin(); loud && i != H.end(); i++) {
         std::cout << i->first + ":" + i->second + ",";
     }
 
@@ -111,60 +113,64 @@ int serialAlgorithm() {
 
     F.sort([](NamePair np, NamePair np2) { return np.second < np2.second; });
 
-
-    for (auto i = H.begin(); i != H.end(); i++) {
-        std::cout << i->first + ":" + i->second + ",";
+    if (loud) {
+        for (auto i = H.begin(); i != H.end(); i++) {
+            std::cout << i->first + ":" + i->second + ",";
+        }
+        std::cout << "\n";
+        for (auto i = F.begin(); i != F.end(); i++) {
+            std::cout << i->first + ":" + i->second + ",";
+        }
+        std::cout << "\n";
     }
-    std::cout << "\n";
-    for (auto i = F.begin(); i != F.end(); i++) {
-        std::cout << i->first + ":" + i->second + ",";
-    }
-
-    std::cout << "\n";
 
     ListOfNamePairs xXPlus2;
     ListOfPositionedNames posNames;
     for (auto hi = H.begin(), fi = F.begin(); hi != H.end() && fi != F.end();) {
-        std::cout << fi->first + ":" + fi->second + "," << hi->first + ":" + hi->second + "," << std::endl;
+        if (loud) std::cout << fi->first + ":" + fi->second + "," << hi->first + ":" + hi->second + "," << std::endl;
         if (fi->second == hi->first) {
             xXPlus2.push_back(NamePair(fi->first, hi->second));
             fi++;hi++;
         } else if ((++fi)->second == hi->first) {
             fi--;
-            std::cout << "####################" << fi->first + ":" + fi->second + "," << hi->first + ":" + hi->second + "," << std::endl;
-            std::cout << "xn-1: " << fi->first <<  ", xn: " << fi->second << "\n";
+            if (loud) {
+                std::cout << "####################" << fi->first + ":" + fi->second + ","
+                          << hi->first + ":" + hi->second + "," << std::endl;
+                std::cout << "xn-1: " << fi->first << ", xn: " << fi->second << "\n";
+            }
             posNames.push_back(PosName(N, fi->second));
             posNames.push_back(PosName(N-1, fi->first));
             fi++;
         } else {
             fi--;
-            std::cout << "####################" << fi->first + ":" + fi->second + "," << hi->first + ":" + hi->second + "," << std::endl;
-            std::cout << "x1: " << hi->first <<  ", x2: " << hi->second << "\n";
+            if (loud) {
+                std::cout << "####################" << fi->first + ":" + fi->second + ","
+                          << hi->first + ":" + hi->second + "," << std::endl;
+                std::cout << "x1: " << hi->first << ", x2: " << hi->second << "\n";
+            }
             hi++;
         }
     }
-    std::cout << "\nstart onePass:";
-
-    for (auto i = xXPlus2.begin(); i != xXPlus2.end(); i++) {
-        std::cout << i->first + ":" + i->second + ",";
+    if (loud) std::cout << "\nstart onePass:";
+    if (loud) {
+        for (auto i = xXPlus2.begin(); i != xXPlus2.end(); i++) {
+            std::cout << i->first + ":" + i->second + ",";
+        }
+        std::cout << std::endl;
     }
-    std::cout << std::endl;
-
     posNames = onePass(xXPlus2, posNames, N);
 
 
     posNames.sort([](PosName pn, PosName pn2) { return pn.first < pn2.first; });
 
     for ( auto i = posNames.begin();  i != posNames.end() ; i++) {
-        std::cout << "  " << i->second;
+        std::cout << i->second << " ";
     }
-
+    std::cout << std::endl;
     return 0;
 }
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-
     return serialAlgorithm();
 }
 
