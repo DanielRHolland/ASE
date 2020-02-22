@@ -1,18 +1,11 @@
 #include "SerialBasketSolver.h"
 
-bool loud = false;
-
 ListOfNamePairs readFile(std::string fileName) {
     ListOfNamePairs listOfNamePairs;
     std::string name1;
     std::string name2;
     std::ifstream file (fileName);
-    if (loud) {std::cout<< fileName;
-        while (getline(file, name1)) {
-            std::cout<< name1 << std::endl;
-        }}
     file.close();
-
     file.open(fileName);
     if (file.is_open()) {
         while ( getline (file, name1, ',') ) {
@@ -35,118 +28,49 @@ ListOfPositionedNames onePass(ListOfNamePairs F, ListOfPositionedNames G, int N,
     ListOfPositionedNames gPrime (G);
     auto gi = G.begin();
     for (auto fi = F.begin(),hi = H.begin(); fi!=F.end();) {
-
-        assert(hi != H.end());
-        assert(fi != F.end());
-        if (loud) {
-            std::cout << " f: " << fi->first << " " << fi->second;
-            if (gi != G.end()) std::cout << "\t| g: " << gi->first << " " << gi->second;
-            else std::cout << " |\t\t  ";
-            std::cout << "\t| h: " << hi->first << " " << hi->second << " \t|";
-        }
-//        i) If x' = z, output (x, z' ) to F' and advance files F and H.
-        if (fi->second == hi->first) {
+        assert(hi != H.end()); // hi should point to a value
+        if (fi->second == hi->first) { // i) If x' = z, output (x, z' ) to F' and advance files F and H.
             fPrime.push_back(NamePair(fi->first, hi->second));
             fi++; hi++;
-            if (loud) std::cout << " result : i" << std::endl;
-        } //       ii) If x' = y' , output (y − t, x) to G' and advance files F and G.
-        else if (gi!=G.end() && fi->second == gi->second) {
+        } else if (gi!=G.end() && fi->second == gi->second) { // ii) If x' = y' , output (y − t, x) to G' and advance files F and G.
             gPrime.push_back(PosName(gi->first-t, fi->first));
             fi++;gi++;
-            if (loud) std::cout << " result : ii" << std::endl;
-        } //      iii) If x' > y' , advance file G.
-        else if (gi!=G.end() && fi->second > gi->second) {
+        } else if (gi!=G.end() && fi->second > gi->second) { // iii) If x' > y' , advance file G.
             gi++;
-            if (loud) std::cout << " result : iii" << std::endl;
-        }
-//       iv) If x' > z, advance file H.
-        else if (fi->second > hi->first) {
+        } else if (fi->second > hi->first) { // iv) If x' > z, advance file H.
             hi++;
-            if (loud) std::cout << " result : iv" << std::endl;
         } else {
-            assert(false);
+            assert(false); // Should never reach this point
         }
     }
-    if (loud) {
-        for (auto i = fPrime.begin(); i != fPrime.end(); i++) {
-            std::cout << i->first + ":" + i->second + ",";
-        }
-        std::cout << std::endl;
-        for (auto i = gPrime.begin(); i != gPrime.end(); i++) {
-            std::cout << i->first << ":" << i->second + ",";
-        }
-        std::cout << std::endl;
-        std::cout << "t:" << t << std::endl;
-    }
-    if (!fPrime.empty()) {
-        if (loud) std::cout << " recursing...." << std::endl;
-        return onePass(fPrime, gPrime, N,t*2);
+    if (!fPrime.empty()) { //
+       return onePass(fPrime, gPrime, N,t*2);
     }
     return gPrime;
 }
 
 
 int serialAlgorithm(std::string fileName) {
-
     ListOfNamePairs H = readFile(fileName);
     int N = H.size()+1;
     ListOfNamePairs F (H);
-    for (auto i = H.begin(); loud && i != H.end(); i++) {
-        std::cout << i->first + ":" + i->second + ",";
-    }
-
     H.sort([](NamePair np, NamePair np2) { return np.first < np2.first ;});
-
     F.sort([](NamePair np, NamePair np2) { return np.second < np2.second; });
-
-    if (loud) {
-        for (auto i = H.begin(); i != H.end(); i++) {
-            std::cout << i->first + ":" + i->second + ",";
-        }
-        std::cout << "\n";
-        for (auto i = F.begin(); i != F.end(); i++) {
-            std::cout << i->first + ":" + i->second + ",";
-        }
-        std::cout << "\n";
-    }
-
     ListOfNamePairs xXPlus2;
     ListOfPositionedNames posNames;
     for (auto hi = H.begin(), fi = F.begin(); hi != H.end() && fi != F.end();) {
-        if (loud) std::cout << fi->first + ":" + fi->second + "," << hi->first + ":" + hi->second + "," << std::endl;
         if (fi->second == hi->first) {
             xXPlus2.push_back(NamePair(fi->first, hi->second));
             fi++;hi++;
-        } else if ((++fi)->second == hi->first) {
-            fi--;
-            if (loud) {
-                std::cout << "####################" << fi->first + ":" + fi->second + ","
-                          << hi->first + ":" + hi->second + "," << std::endl;
-                std::cout << "xn-1: " << fi->first << ", xn: " << fi->second << "\n";
-            }
+        } else if (((++fi)--)->second == hi->first) { // get next value by pre-incrementing, then post-decrement to return fi to its state before evaluation of the expression
             posNames.push_back(PosName(N, fi->second));
             posNames.push_back(PosName(N-1, fi->first));
             fi++;
         } else {
-            fi--;
-            if (loud) {
-                std::cout << "####################" << fi->first + ":" + fi->second + ","
-                          << hi->first + ":" + hi->second + "," << std::endl;
-                std::cout << "x1: " << hi->first << ", x2: " << hi->second << "\n";
-            }
             hi++;
         }
     }
-    if (loud) std::cout << "\nstart onePass:";
-    if (loud) {
-        for (auto i = xXPlus2.begin(); i != xXPlus2.end(); i++) {
-            std::cout << i->first + ":" + i->second + ",";
-        }
-        std::cout << std::endl;
-    }
     posNames = onePass(xXPlus2, posNames, N);
-
-
     posNames.sort([](PosName pn, PosName pn2) { return pn.first < pn2.first; });
 
     for ( auto i = posNames.begin();  i != posNames.end() ; i++) {
