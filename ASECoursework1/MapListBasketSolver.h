@@ -5,10 +5,21 @@
 #ifndef ASECOURSEWORK_MAPLISTBASKETSOLVER_H
 #define ASECOURSEWORK_MAPLISTBASKETSOLVER_H
 
+#include <map>
+#include <list>
+#include <iostream>
+#include <utility>
+#include <fstream>
 
-class MapListBasketSolver {
+using MapOfNames = std::map<std::string, std::string>;
+using WestEastMaps = std::pair<MapOfNames, MapOfNames>;
 
-};
+
+
+int mapListBasketSolver(std::string);
+
+
+WestEastMaps readFileToWEM(std::string);
 
 
 #endif //ASECOURSEWORK_MAPLISTBASKETSOLVER_H

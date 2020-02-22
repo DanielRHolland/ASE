@@ -2,8 +2,8 @@
 #include "UnorderedMapListBasketSolver.h"
 
 
-WestEastMaps readFileToWEM(std::string fileName) {
-    WestEastMaps westEastMaps;
+WestEastUnOrMaps readFileToUWEM(std::string fileName) {
+    WestEastUnOrMaps westEastMaps;
     std::string name1;
     std::string name2;
     std::ifstream file (fileName);
@@ -21,7 +21,7 @@ WestEastMaps readFileToWEM(std::string fileName) {
 }
 
 int unorderedMapListBasketSolver(std::string fileName) {
-    WestEastMaps westEastMaps = readFileToWEM(fileName);
+    WestEastUnOrMaps westEastMaps = readFileToUWEM(fileName);
     std::list<std::string> namesList;
     auto i = westEastMaps.first.begin();
     namesList.push_front(i->first);
@@ -38,6 +38,7 @@ int unorderedMapListBasketSolver(std::string fileName) {
     for (auto i = namesList.begin(); i!= namesList.end(); i++) {
         std::cout << *i << " ";
     }
+    std::cout << std::endl;
     return 0;
 }
 

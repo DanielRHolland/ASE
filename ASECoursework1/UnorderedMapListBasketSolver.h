@@ -8,14 +8,14 @@
 #include <fstream>
 
 using UnOrMapOfNames = std::unordered_map<std::string, std::string>;
-using WestEastMaps = std::pair<UnOrMapOfNames, UnOrMapOfNames>;
+using WestEastUnOrMaps = std::pair<UnOrMapOfNames, UnOrMapOfNames>;
 
 
 
 int unorderedMapListBasketSolver(std::string);
 
 
-WestEastMaps readFileToWEM(std::string);
+WestEastUnOrMaps readFileToUWEM(std::string);
 
 
 #endif //ASECOURSEWORK_UNORDEREDMAPLISTBASKETSOLVER_H
