@@ -1,0 +1,14 @@
+//
+// Created by dan on 22/02/2020.
+//
+
+#ifndef ASECOURSEWORK_MAPLISTBASKETSOLVER_H
+#define ASECOURSEWORK_MAPLISTBASKETSOLVER_H
+
+
+class MapListBasketSolver {
+
+};
+
+
+#endif //ASECOURSEWORK_MAPLISTBASKETSOLVER_H
