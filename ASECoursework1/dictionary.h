@@ -154,5 +154,5 @@ namespace Containers {
  * - proper-ness of for loops as whiles + declarations?
  * - any need to store in order?
  * - copy should preserve structure/order?
- *
+ * - std lib functions? e.g. find ?
  */
