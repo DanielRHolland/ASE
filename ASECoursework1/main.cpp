@@ -6,6 +6,7 @@
 #include <chrono>
 #include <iostream>
 #include <fstream>
+#include <string>
 
 double timedRun(std::function<int(std::string)> f, std::string p) {
     auto start = std::chrono::high_resolution_clock::now();
@@ -27,7 +28,7 @@ using ResultsRow = std::pair<int,std::list<double>>;
 int resultListsToCsv(std::string heading, std::list<ResultsRow> results) {
     std::time_t timestamp = std::time(nullptr);
     std::ofstream csvFile;
-    csvFile.open ("/home/dan/Desktop/Sync/uni/ASE/ASECoursework1/results/"+ std::to_string(timestamp) + ".csv");
+    csvFile.open ("/home/dan/Desktop/Sync/uni/ASE/ASECoursework1/results/"+ std::to_string(results.front().first) + heading + std::to_string(timestamp) + ".csv");
     csvFile << "n, " << heading << "\n";
     for (auto i : results) {
         csvFile << i.first << ", ";
@@ -50,14 +51,14 @@ int labelToInt(std::string label) {
     }
 }
 
-int runTimeTrials(std::function<int(std::string)> f, std::string heading, std::list<std::string> sizes) {
+int runTimeTrials(std::function<int(std::string)> f, std::string heading, std::list<std::string> sizes, int n) {
     std::list<ResultsRow> results;
     for (auto i : sizes) {
         int size = labelToInt(i);
         std::string fileName =
                 "/home/dan/Desktop/Sync/uni/ASE/ASECoursework1/Cswk1-Basket_of_Names-test_data/Basket_of_Names-test_data/"
                 + i +"/input-papers-" + i +".txt";
-        auto resultRow = timedRuns(f, fileName, 1);
+        auto resultRow = timedRuns(f, fileName, n);
         results.push_front(ResultsRow(size, resultRow));
     }
     resultListsToCsv(heading, results);
@@ -67,30 +68,56 @@ int runTimeTrials(std::function<int(std::string)> f, std::string heading, std::l
 int main(int argc, const char* argv[]) {
     std::string fileName = "/home/dan/Desktop/Sync/uni/ASE/ASECoursework1/Cswk1-Basket_of_Names-test_data/Basket_of_Names-test_data/20/input-papers-20.txt";
     //std::list<std::string> sizes = { "20","50","100","200", "500", "1K" , "2K", "5K", "10K", "20K"};
-    std::list<std::string> sizes = { "20","50","100","200",
-                                     "500", "1K" , "2K", "5K",
-                                     "10K", "20K", "50K", "100K",
-                                     "200K", "500K", "1M","2M","3M"};
-    sizes = {"100K"};
+    std::list<std::string> sizes = {"100"};
+    std::list<std::string> allSizes = { "20","50","100","200",
+                          "500", "1K" , "2K", "5K",
+                          "10K", "20K", "50K", "100K",
+                          "200K", "500K", "1M","2M","3M"};
+
     std::function<int(std::string)> fn = serialAlgorithm;
+    std::string heading = "SerialAlgorithm";
+    bool isTimeTrial = false;
+    int numberOfTimesToRun = 1;
     for(int i = 0; i < argc; ++i) {
         if (std::string(argv[i]) == "-s") {
-            sizes = { std::string(argv[++i]) };
+            std::string sizeArg = std::string(argv[++i]);
+            if (sizeArg == "all") {
+                sizes = allSizes;
+            } else if (sizeArg == "upto") {
+              std::string limit = std::string(argv[++i]);
+              std::list<std::string> newSizes;
+              for(auto i = allSizes.begin(); i!=allSizes.end() && *(--i)++!= limit; i++) {
+                newSizes.push_back(*i);
+              }
+              sizes = newSizes;
+            } else {
+                sizes = {sizeArg};
+            }
         } else if (std::string(argv[i]) == "-a") {
             std::string functionName = std::string(argv[++i]);
             if (functionName == "umap") {
                 fn = unorderedMapListBasketSolver;
+                heading = "UnorderedMapAndList";
             } else if (functionName == "map") {
                 fn = mapListBasketSolver;
+                heading = "MapAndList";
             } else {
                 fn = serialAlgorithm;
+                heading = "SerialAlgorithm";
             }
+        } else if (std::string(argv[i]) == "-n") {
+            numberOfTimesToRun = std::atoi(argv[++i]);
+        } else if (std::string(argv[i]) == "-t") {
+            isTimeTrial = true;
         } else {
                 fileName = argv[i];
         }
     }
-
-    runTimeTrials( serialAlgorithm , "Results for serial algorithm", sizes);
+    if (isTimeTrial) {
+      runTimeTrials( fn , heading, sizes, numberOfTimesToRun);
+    } else {
+      fn(fileName);
+    }
 //    std::string fileName = "/home/dan/Desktop/Sync/uni/ASE/ASECoursework1/Cswk1-Basket_of_Names-test_data/Basket_of_Names-test_data/"+ std::to_string(num) +"/input-papers-"+std::to_string(num)+".txt";
 //    serialAlgorithm(fileName);
 //    mapListBasketSolver(fileName);
