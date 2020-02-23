@@ -28,8 +28,7 @@ ListOfPositionedNames onePass(ListOfNamePairs F, ListOfPositionedNames G, int N,
     ListOfPositionedNames gPrime (G);
     auto gi = G.begin();
     for (auto fi = F.begin(),hi = H.begin(); fi!=F.end();) {
-        assert(hi != H.end()); // hi should point to a value
-        if (fi->second == hi->first) { // i) If x' = z, output (x, z' ) to F' and advance files F and H.
+        if (hi!=H.end() && fi->second == hi->first) { // i) If x' = z, output (x, z' ) to F' and advance files F and H.
             fPrime.push_back(NamePair(fi->first, hi->second));
             fi++; hi++;
         } else if (gi!=G.end() && fi->second == gi->second) { // ii) If x' = y' , output (y − t, x) to G' and advance files F and G.
@@ -37,7 +36,7 @@ ListOfPositionedNames onePass(ListOfNamePairs F, ListOfPositionedNames G, int N,
             fi++;gi++;
         } else if (gi!=G.end() && fi->second > gi->second) { // iii) If x' > y' , advance file G.
             gi++;
-        } else if (fi->second > hi->first) { // iv) If x' > z, advance file H.
+        } else if (hi!=H.end() && fi->second > hi->first) { // iv) If x' > z, advance file H.
             hi++;
         } else {
             assert(false); // Should never reach this point
