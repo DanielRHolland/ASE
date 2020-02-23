@@ -17,15 +17,15 @@ routes = do
 
 hello :: ActionM ()
 hello = do
-  html $ mconcat ["<h3>Hello World!</h3>"]
+  html ( mconcat ["<h3>Hello World!</h3>"] )
 
 goodbye :: ActionM ()
 goodbye = do
-  html $ mconcat ["<h3>Goodbye!</h3>"]
+  html ( mconcat ["<h3>Goodbye!</h3>"] )
 
 location :: ActionM ()
 location = do
-  json $ Location 45 "Place 45" (Coord 45.23 12412.32)
+  json ( Location 45 "Place 45" (Coord 45.23 12412.32) )
 
 routeList :: ActionM ()
 routeList = do
@@ -34,7 +34,7 @@ routeList = do
   let loc2 = Location 453 "Place 453" (Coord 3243.342 131.32)
   let locs = [loc1, loc2]
   let r1 = Route 1 name locs
-  json $ r1
+  json ( r1 )
 
  
 main = scotty 3000 routes  
