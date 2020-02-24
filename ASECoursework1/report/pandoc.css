@@ -62,7 +62,8 @@ ul, ol {
 }
 
 figcaption {
-  font-weight: bold;
+  font-style: italic;
+  font-size: 9pt;
 }
 
 .abstract {
