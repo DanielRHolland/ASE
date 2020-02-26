@@ -19,13 +19,13 @@ ListOfNamePairs readFile(std::string fileName) {
 
 
 
-ListOfPositionedNames onePass(ListOfNamePairs F, ListOfPositionedNames G, int N, int t = 2) {
+int onePass(ListOfNamePairs &F, ListOfPositionedNames &G, int t = 2) {
     ListOfNamePairs H (F);
     F.sort([](NamePair np, NamePair np2) { return np.second < np2.second ;});
     H.sort([](NamePair np, NamePair np2) { return np.first < np2.first; });
     G.sort([](PosName pn, PosName pn2) { return pn.second < pn2.second; });
     ListOfNamePairs fPrime;
-    ListOfPositionedNames gPrime (G);
+    ListOfPositionedNames gPrime;
     auto gi = G.begin();
     for (auto fi = F.begin(),hi = H.begin(); fi!=F.end();) {
         if (hi!=H.end() && fi->second == hi->first) { // i) If x' = z, output (x, z' ) to F' and advance files F and H.
@@ -42,10 +42,9 @@ ListOfPositionedNames onePass(ListOfNamePairs F, ListOfPositionedNames G, int N,
             assert(false); // Should never reach this point
         }
     }
-    if (!fPrime.empty()) { //
-       return onePass(fPrime, gPrime, N,t*2);
-    }
-    return gPrime;
+    F = fPrime;
+    G.merge(gPrime);
+    return 0;
 }
 
 
@@ -55,25 +54,29 @@ int serialAlgorithm(std::string fileName) {
     ListOfNamePairs F (H);
     H.sort([](NamePair np, NamePair np2) { return np.first < np2.first ;});
     F.sort([](NamePair np, NamePair np2) { return np.second < np2.second; });
-    ListOfNamePairs xXPlus2;
-    ListOfPositionedNames posNames;
+    ListOfNamePairs fPrime;
+    ListOfPositionedNames gPrime;
     for (auto hi = H.begin(), fi = F.begin(); hi != H.end() && fi != F.end();) {
         if (fi->second == hi->first) {
-            xXPlus2.push_back(NamePair(fi->first, hi->second));
+            fPrime.push_back(NamePair(fi->first, hi->second));
             fi++;hi++;
         } else if (((++fi)--)->second == hi->first) { // get next value by pre-incrementing, then post-decrement to return fi to its state before evaluation of the expression
-            posNames.push_back(PosName(N, fi->second));
-            posNames.push_back(PosName(N-1, fi->first));
+            gPrime.push_back(PosName(N, fi->second));
+            gPrime.push_back(PosName(N-1, fi->first));
             fi++;
         } else {
             hi++;
         }
     }
-    posNames = onePass(xXPlus2, posNames, N);
-    posNames.sort([](PosName pn, PosName pn2) { return pn.first < pn2.first; });
 
-    for ( auto i = posNames.begin();  i != posNames.end() ; i++) {
-        std::cout << i->second << " ";
+    for (int t=2; !fPrime.empty(); t*=2) {
+        onePass(fPrime, gPrime, t);
+    }
+
+    gPrime.sort([](PosName pn, PosName pn2) { return pn.first < pn2.first; });
+
+    for ( auto i : gPrime) {
+        std::cout << i.second << " ";
     }
     std::cout << std::endl;
     return 0;
