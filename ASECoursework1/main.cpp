@@ -66,8 +66,7 @@ int runTimeTrials(std::function<int(std::string)> f, std::string heading, std::l
 }
 
 int main(int argc, const char* argv[]) {
-    std::string fileName = "/home/dan/Desktop/Sync/uni/ASE/ASECoursework1/Cswk1-Basket_of_Names-test_data/Basket_of_Names-test_data/20/input-papers-20.txt";
-    //std::list<std::string> sizes = { "20","50","100","200", "500", "1K" , "2K", "5K", "10K", "20K"};
+    std::string fileName;
     std::list<std::string> sizes = {"100"};
     std::list<std::string> allSizes = { "20","50","100","200",
                           "500", "1K" , "2K", "5K",
@@ -115,6 +114,8 @@ int main(int argc, const char* argv[]) {
     }
     if (isTimeTrial) {
       runTimeTrials( fn , heading, sizes, numberOfTimesToRun);
+    } else if (fileName.empty()) {
+        std::cout << "No file provided" << std::endl;
     } else {
       fn(fileName);
     }
