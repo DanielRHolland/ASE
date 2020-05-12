@@ -1,0 +1,9 @@
+A,F
+F,T
+T,W
+W,P
+P,S
+S,V
+V,Z
+Z,B
+B,C
