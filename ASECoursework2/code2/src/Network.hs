@@ -1,0 +1,31 @@
+module Network where
+import Data.Sort
+
+type Network = [Node]
+
+data Node = Node {
+  nodeName :: String,
+  edges :: [Edge]}
+
+data Edge = Edge {
+  edgeName :: String,
+  start :: Int,
+  end :: Int,
+  weight :: Int}
+  deriving (Show, Eq)
+
+getAllEdges :: Network -> [Edge]
+getAllEdges [] = []
+getAllEdges (n:ns) = (edges n) ++ (getAllEdges ns)
+
+
+removeHeavierDuplicates :: [Edge] -> [Edge]
+removeHeavierDuplicates [] = []
+removeHeavierDuplicates l = 
+    let ds = filter (sameEnds (head l)) l
+        lightest = head (reverse (sortOn weight ds))
+        es = filter (\x -> not (sameEnds x (head l))) l 
+    in lightest : (removeHeavierDuplicates es) 
+
+sameEnds :: Edge -> Edge -> Bool
+sameEnds a b = (start a) == (start b) && (end a) == (end b)

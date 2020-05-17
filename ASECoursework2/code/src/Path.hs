@@ -4,19 +4,9 @@ import Data.Sort
 
 type NodeId = Int
 
-data Edge = Edge {
-  start :: Int,
-  end :: Int,
-  weight :: Int} 
-  deriving (Show)
 
 type Path = [Edge]
 
-data Node = Node {
-  name :: String,
-  nodeId :: Int
-  }
-  deriving (Show)
 
 data Network = Network [Edge] [Node]
   deriving (Show)
@@ -36,12 +26,13 @@ randPaths seed num size = if num>0 then (randomPath seed) : (randPaths (seed+1) 
 randomList :: Int -> [Int]
 randomList seed = randoms (mkStdGen seed) :: [Int]
 
-randomPath :: Int -> Path
-randomPath seed = foldl (\xs s -> (randomEdge s) : xs) [] (take 25 (randomList seed))
+randomPath :: Int -> Int -> Int -> Path
+randomPath seed size numberOfNodes = foldl (\xs s -> (randomEdge s numberOfNodes) : xs) [] (take size (randomList seed))
 
+maxEdgeWeight = 100
 randomEdge :: Int -> Edge
-randomEdge seed = let a:b:c:xs = randomRs (1, 10) (mkStdGen seed) :: [Int]
-  in Edge a b (head (randomRs (1, 100) (mkStdGen (seed*2)) :: [Int]))
+randomEdge seed numberOfNodes = let a:b:c:xs = randomRs (1, numberOfNodes) (mkStdGen seed) :: [Int]
+  in Edge a b (head (randomRs (1, maxEdgeWeight) (mkStdGen (seed*2)) :: [Int]))
 
 
 areNodesConnectable :: NodeId -> NodeId -> [Edge] -> Bool
