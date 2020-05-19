@@ -1,4 +1,5 @@
 module Main where
+import NetworkTests
 
-main :: IO ()
-main = putStrLn "Hello, Haskell!"
+main :: IO Bool
+main = runAllTests

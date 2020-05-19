@@ -57,7 +57,7 @@ executable cw
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.12 && <4.13, sort, random, QuickCheck, HUnit, vector
+  build-depends:       base >=4.12 && <4.13, sort, random, QuickCheck, HUnit, binary-tree
 
   -- Directories containing source files.
   hs-source-dirs:      src

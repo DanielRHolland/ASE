@@ -1,8 +1,10 @@
+{-# LANGUAGE TemplateHaskell #-}
 module NetworkTests where
 
 import Test.QuickCheck
 import Test.HUnit
 import Network
+import System.Random
 
 --instance Arbitrary Edge where
 --    arbitrary = Edge <$> str <*> pos <*> pos <*> pos
@@ -17,12 +19,47 @@ instance Arbitrary Edge where
         Positive e <- arbitrary
         Positive w <- arbitrary
         return (Edge n s e w)
-        
+       
+
+instance Arbitrary StdGen where
+    arbitrary = do
+        x <- arbitrary
+        return (mkStdGen x)
+
 
 prop_removeHeavierDuplicatesDoesNotReturnLongerList :: [Edge] -> Bool
-prop_removeHeavierDuplicatesDoesNotReturnLongerList edges = length (removeHeavierDuplicates edges) >= length (edges)
+prop_removeHeavierDuplicatesDoesNotReturnLongerList edges = length (removeHeavierDuplicates edges) <= length edges
 
 
+prop_removeHeavierDuplicatesReturnsNoDuplicates :: [Edge] -> Bool
+prop_removeHeavierDuplicatesReturnsNoDuplicates edges = noDuplicates ( removeHeavierDuplicates edges)
+
+
+noDuplicates :: [Edge] -> Bool
+noDuplicates [] = True
+noDuplicates (e:edges) = length notDs == length edges && noDuplicates notDs 
+    where notDs = filter (\x -> not (sameEnds e x)) edges
+
+
+prop_chooseRandomPathResultNotLonger :: StdGen -> [Edge] -> Bool
+prop_chooseRandomPathResultNotLonger g edges = length ( chooseRandomPath g edges ) <= length edges
+
+
+prop_chooseRandomPathReturnsDifferentPathsForDifferentSeeds :: Int -> [Edge] -> Bool
+prop_chooseRandomPathReturnsDifferentPathsForDifferentSeeds seed edges = (chooseRandomPath g0 edges /= chooseRandomPath g1 edges) || (length edges)<3
+  where g0 = mkStdGen seed
+        g1 = mkStdGen (seed+1)
+
+
+differentStdGenGenerator :: Gen (StdGen, StdGen)
+differentStdGenGenerator = suchThat (arbitrary :: Gen (StdGen,StdGen)) (
+  \(g0,g1) -> 
+    let (v0,_) = random g0 :: (Bool, StdGen)
+        (v1,_) = random g1 :: (Bool, StdGen)
+    in v0 /= v1)
+
+notEmptyListGenerator :: Gen [Edge]
+notEmptyListGenerator = suchThat (arbitrary :: Gen [Edge]) ((/=) [])
 
 
 --prop_RevRev xs = reverse (reverse xs) == xs
@@ -82,3 +119,13 @@ tests :: Test
 tests = TestList [getAllEdgesReturnsListOfEdges, getAllEdgesReturnsListOfEdges, removeHeavierDuplicatesRemovesNoneIfNoDuplicates, sameEndsFalseOnDiffEnds, sameEndsTrueOnSameEnds]
 
 runUnitTests = runTestTT tests
+
+
+-- weird for reasons here: http://hackage.haskell.org/package/QuickCheck-2.14/docs/Test-QuickCheck-All.html#v:quickCheckAll
+return [] 
+runPropTests = $quickCheckAll
+
+
+runAllTests = do
+                  runUnitTests
+                  runPropTests

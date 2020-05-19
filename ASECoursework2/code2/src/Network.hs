@@ -1,5 +1,6 @@
 module Network where
 import Data.Sort
+import System.Random
 
 type Network = [Node]
 
@@ -29,3 +30,8 @@ removeHeavierDuplicates l =
 
 sameEnds :: Edge -> Edge -> Bool
 sameEnds a b = (start a) == (start b) && (end a) == (end b)
+
+
+
+chooseRandomPath :: StdGen -> [Edge] -> [Edge]
+chooseRandomPath g edges = edges

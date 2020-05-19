@@ -7,4 +7,27 @@ In order to test the function `removeHeavierDuplicates` with a wider range of te
 
 As the function takes a list of Edges as a parameter, `Edge` needed an instance declaration of `Arbitrary`. This allows QuickCheck to generate arbitrary Edges.
 
+One of the properties of `removeHeavierDuplicates` is that it never returns a longer list than it was passed as a parameter. A property test was written to check this, and this failed. However, upon closer inspection, it immediately became apparent that this was because the `>=` operator had been used instead of `<=` in the test itself. This was amended, and the test rerun and passed.
+
+Another of the properties of `removeHeavierDuplicates` is that no two Edges in the returned list should have the same start and end values.
+
+---------
+
+The next function to implement was `chooseRandomPath`, which should take a random number generator of type `StdGen` and a list of Edges, and should return a list of Edges containing a subset of the initial list. For generators with different seed values, different selections of edges should be generated. 
+
+Writing tests for this function proved to be more complicated. One initial idea was to simply call the function twice with generators which have seeds which are guaranteed to be different, and test if the outputs differ. The problem with this is that the outputs may well be the same for different seeds, especially with shorter lists of Edges (and must be the same if the list is empty).  
+
+A simpler property to test is that `chooseRandomPath` does not return a greater number of edges than it is given. A test was written to test this, and the function was made to pass this. As this requires a `StdGen` as a parameter, `StdGen` also needed an instance declaration of `Arbitrary`. This was done in the same way as it was for `Edge`. However, this test could be passed by just making the function return its input. 
+
+One way to guarantee the outputs are different is to provide two `StdGen`s which are known to return different values when they are run. To do this, the `suchThat` predicate was used to build the `differentStdGenGenerator`. This produces a pair of type `(StdGen, StdGen)`, with the guarantee that the first values generated are different ensured by using the `next` function to look ahead. However, if the list is empty, the return values must still be equal, so a generator had to be defined to generate a list which is guaranteed not to be empty.
+
+
+At this point I defined a `runAllTests` function to run the tests all at once, and modified the `Main.hs` file to run this function, as running tests through the REPL had become tedious.
+
+
+
+---------
+
+
+
 
