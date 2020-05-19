@@ -41,25 +41,33 @@ noDuplicates (e:edges) = length notDs == length edges && noDuplicates notDs
     where notDs = filter (\x -> not (sameEnds e x)) edges
 
 
+newtype StdGenDiffPair = StdGenDiffPair (StdGen, StdGen)
+  deriving Show
+
+instance Arbitrary StdGenDiffPair where
+ arbitrary = do 
+      gs <- suchThat (arbitrary :: Gen (StdGen, StdGen)) (
+        \(g0,g1) -> 
+          let (v0,_) = random g0 :: (Bool, StdGen)
+              (v1,_) = random g1 :: (Bool, StdGen)
+          in v0 /= v1)
+      return (StdGenDiffPair gs)
+
+newtype EdgeListNonEmpty = EdgeListNonEmpty [Edge]
+  deriving Show
+
+instance Arbitrary EdgeListNonEmpty where
+  arbitrary = do
+            xs <- suchThat (arbitrary :: Gen [Edge]) ((/=) [])
+            return (EdgeListNonEmpty xs)
+         
+
 prop_chooseRandomPathResultNotLonger :: StdGen -> [Edge] -> Bool
 prop_chooseRandomPathResultNotLonger g edges = length ( chooseRandomPath g edges ) <= length edges
 
 
-prop_chooseRandomPathReturnsDifferentPathsForDifferentSeeds :: Int -> [Edge] -> Bool
-prop_chooseRandomPathReturnsDifferentPathsForDifferentSeeds seed edges = (chooseRandomPath g0 edges /= chooseRandomPath g1 edges) || (length edges)<3
-  where g0 = mkStdGen seed
-        g1 = mkStdGen (seed+1)
-
-
-differentStdGenGenerator :: Gen (StdGen, StdGen)
-differentStdGenGenerator = suchThat (arbitrary :: Gen (StdGen,StdGen)) (
-  \(g0,g1) -> 
-    let (v0,_) = random g0 :: (Bool, StdGen)
-        (v1,_) = random g1 :: (Bool, StdGen)
-    in v0 /= v1)
-
-notEmptyListGenerator :: Gen [Edge]
-notEmptyListGenerator = suchThat (arbitrary :: Gen [Edge]) ((/=) [])
+prop_chooseRandomPathReturnsDifferentPathsForDifferentRngs :: StdGenDiffPair -> EdgeListNonEmpty -> Bool
+prop_chooseRandomPathReturnsDifferentPathsForDifferentRngs (StdGenDiffPair (g0, g1)) (EdgeListNonEmpty edges) = (chooseRandomPath g0 edges /= chooseRandomPath g1 edges)
 
 
 --prop_RevRev xs = reverse (reverse xs) == xs
