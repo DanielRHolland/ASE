@@ -47,3 +47,6 @@ chooseRandomPaths g edges num
               where (_,g0) = next g
 
 
+bestPaths :: StdGen -> [Path] -> Int -> [Path]
+bestPaths g paths num = take num paths
+

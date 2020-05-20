@@ -42,6 +42,14 @@ prop_chooseRandomPathsHasVariation (StdGenFirstTwoDiffer g) (EdgeListNonEmpty al
   where (p:ps) = chooseRandomPaths g allEdges (num+1)
 
 
+prop_bestPathsReturnsCorrectNumber :: StdGen -> [Network.Path] -> IntAtLeastOne -> Bool
+prop_bestPathsReturnsCorrectNumber g paths (IntAtLeastOne num)  = x == length (bestPaths g paths num)
+  where l = length paths
+        x = if num > l then l else num
+
+
+
+
 --1
 getAllEdgesReturnsEmptyListFromEmptyArray :: Test
 getAllEdgesReturnsEmptyListFromEmptyArray = TestCase (assertEqual "getAllEdges [] should return []" [] (getAllEdges []) )

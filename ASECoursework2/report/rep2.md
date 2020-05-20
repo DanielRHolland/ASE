@@ -38,6 +38,11 @@ The test generators at this point had become to take up quite a lot of the tests
 --------
 
 
+The next step was to create a function to return the best paths from a set. This should take a list of paths and the number to return. The length of the returned list should be the lesser of either the length of the original list or the number to return, so a test was written to test this.
+
+The next property to test was whether the paths returned are the highest scorers. In order to write this test and implement the function itself, a scoring function needed to be implemented.
+
+The `scorePath` function returns an `Int` representing the score of the path. The scoring is to be done as follows:
 
 
 --------
