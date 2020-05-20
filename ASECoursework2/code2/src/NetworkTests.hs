@@ -5,26 +5,7 @@ import Test.QuickCheck
 import Test.HUnit
 import Network
 import System.Random
-
---instance Arbitrary Edge where
---    arbitrary = Edge <$> str <*> pos <*> pos <*> pos
---      where pos = getPositive <$> arbitrary
---            str = getString <$> arbitrary
-
-
-instance Arbitrary Edge where
-    arbitrary = do
-        n <- arbitrary
-        Positive s <- arbitrary
-        Positive e <- arbitrary
-        Positive w <- arbitrary
-        return (Edge n s e w)
-       
-
-instance Arbitrary StdGen where
-    arbitrary = do
-        x <- arbitrary
-        return (mkStdGen x)
+import TestDataGenerators
 
 
 prop_removeHeavierDuplicatesDoesNotReturnLongerList :: [Edge] -> Bool
@@ -41,27 +22,6 @@ noDuplicates (e:edges) = length notDs == length edges && noDuplicates notDs
     where notDs = filter (\x -> not (sameEnds e x)) edges
 
 
-newtype StdGenDiffPair = StdGenDiffPair (StdGen, StdGen)
-  deriving Show
-
-instance Arbitrary StdGenDiffPair where
- arbitrary = do 
-      gs <- suchThat (arbitrary :: Gen (StdGen, StdGen)) (
-        \(g0,g1) -> 
-          let (v0,_) = random g0 :: (Bool, StdGen)
-              (v1,_) = random g1 :: (Bool, StdGen)
-          in v0 /= v1)
-      return (StdGenDiffPair gs)
-
-newtype EdgeListNonEmpty = EdgeListNonEmpty [Edge]
-  deriving Show
-
-instance Arbitrary EdgeListNonEmpty where
-  arbitrary = do
-            xs <- suchThat (arbitrary :: Gen [Edge]) ((/=) [])
-            return (EdgeListNonEmpty xs)
-         
-
 prop_chooseRandomPathResultNotLonger :: StdGen -> [Edge] -> Bool
 prop_chooseRandomPathResultNotLonger g edges = length ( chooseRandomPath g edges ) <= length edges
 
@@ -69,20 +29,17 @@ prop_chooseRandomPathResultNotLonger g edges = length ( chooseRandomPath g edges
 prop_chooseRandomPathReturnsDifferentPathsForDifferentRngs :: StdGenDiffPair -> EdgeListNonEmpty -> Bool
 prop_chooseRandomPathReturnsDifferentPathsForDifferentRngs (StdGenDiffPair (g0, g1)) (EdgeListNonEmpty edges) = (chooseRandomPath g0 edges /= chooseRandomPath g1 edges)
 
-
---prop_RevRev xs = reverse (reverse xs) == xs
---  where types = xs::[Int]
-
-
---prop_getAllEdgesLengthSame :: Network -> Bool
---prop_getAllEdgesLengthSame network = getAllEdges network
+prop_chooseRandomPathsHasSameLengthAsNumToGenerate :: StdGen -> [Edge] -> IntAtLeastOne -> Bool
+prop_chooseRandomPathsHasSameLengthAsNumToGenerate g allEdges (IntAtLeastOne num) = num == length (chooseRandomPaths g allEdges num)
 
 
+prop_chooseRandomPathsDiffersWithG :: StdGenDiffPair -> EdgeListNonEmpty -> IntAtLeastOne -> Bool
+prop_chooseRandomPathsDiffersWithG (StdGenDiffPair (g0,g1)) (EdgeListNonEmpty allEdges) (IntAtLeastOne num) = (chooseRandomPaths g0 allEdges num /= chooseRandomPaths g1 allEdges num)
 
---secondDegreeNodesAreConnected :: Test
---secondDegreeNodesAreConnected = 
---  let (n0, n3) = secondDegreeIndirectlyConnectedNodes
---  in TestCase (assertBool "secondDegreeConnectedAreConnected" ( nodesConnected n0 n3 ) )
+
+prop_chooseRandomPathsHasVariation :: StdGenFirstTwoDiffer -> EdgeListNonEmpty -> IntAtLeastOne -> Bool
+prop_chooseRandomPathsHasVariation (StdGenFirstTwoDiffer g) (EdgeListNonEmpty allEdges) (IntAtLeastOne num) = any ((/=) p) ps
+  where (p:ps) = chooseRandomPaths g allEdges (num+1)
 
 
 --1

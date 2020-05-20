@@ -51,7 +51,7 @@ executable cw
   main-is:             Main.hs
 
   -- Modules included in this executable, other than Main.
-  other-modules:       NetworkTests, Network
+  other-modules:       NetworkTests, Network, TestDataGenerators
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
