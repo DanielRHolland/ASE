@@ -66,6 +66,21 @@ figcaption {
   font-size: 9pt;
 }
 
+td,  th {
+  border: 0px solid #ddd;
+  padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2;}
+
+th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: darkgrey;
+  color: white;
+}
+
 .abstract {
   line-height: 1.5;
 }
