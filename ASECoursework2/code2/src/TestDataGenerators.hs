@@ -2,7 +2,7 @@ module TestDataGenerators where
 
 import Test.QuickCheck
 import System.Random
-import Network
+import ShortestRoute
 
 
 instance Arbitrary Edge where

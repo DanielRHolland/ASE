@@ -1,5 +1,5 @@
 module Main where
-import NetworkTests
+import ShortestRouteTests
 
 main :: IO Bool
 main = runAllTests

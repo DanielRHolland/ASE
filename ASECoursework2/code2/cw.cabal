@@ -51,13 +51,13 @@ executable cw
   main-is:             Main.hs
 
   -- Modules included in this executable, other than Main.
-  other-modules:       NetworkTests, Network, TestDataGenerators
+  other-modules:       ShortestRouteTests, ShortestRoute, TestDataGenerators
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.12 && <4.13, sort, random, QuickCheck, HUnit, binary-tree
+  build-depends:       base >=4.12 && <4.13, sort, random, QuickCheck, HUnit
 
   -- Directories containing source files.
   hs-source-dirs:      src

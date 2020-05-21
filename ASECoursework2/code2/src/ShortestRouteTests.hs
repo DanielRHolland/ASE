@@ -1,9 +1,9 @@
 {-# LANGUAGE TemplateHaskell #-}
-module NetworkTests where
+module ShortestRouteTests where
 
 import Test.QuickCheck
 import Test.HUnit
-import Network
+import ShortestRoute
 import System.Random
 import TestDataGenerators
 
@@ -42,7 +42,7 @@ prop_chooseRandomPathsHasVariation (StdGenFirstTwoDiffer g) (EdgeListNonEmpty al
   where (p:ps) = chooseRandomPaths g allEdges (num+1)
 
 
-prop_bestPathsReturnsCorrectNumber :: StdGen -> [Network.Path] -> IntAtLeastOne -> Bool
+prop_bestPathsReturnsCorrectNumber :: StdGen -> [ShortestRoute.Path] -> IntAtLeastOne -> Bool
 prop_bestPathsReturnsCorrectNumber g paths (IntAtLeastOne num)  = x == length (bestPaths g paths num)
   where l = length paths
         x = if num > l then l else num

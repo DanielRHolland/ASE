@@ -1,4 +1,4 @@
-module Network where
+module ShortestRoute where
 import Data.Sort
 import System.Random
 
