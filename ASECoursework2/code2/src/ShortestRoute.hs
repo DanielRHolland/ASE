@@ -44,7 +44,7 @@ chooseRandomPaths :: StdGen -> [Edge] -> Int -> [Path]
 chooseRandomPaths g edges num 
                 | num <= 0 = []
                 | otherwise = (chooseRandomPath g edges) : (chooseRandomPaths g0 edges (num-1))
-              where (_,g0) = next g
+                where (_,g0) = next g
 
 
 bestPaths :: StdGen -> [Path] -> Int -> [Path]

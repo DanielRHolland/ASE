@@ -8,6 +8,51 @@ import System.Random
 import TestDataGenerators
 
 
+
+-- Unit Tests
+
+getAllEdgesReturnsEmptyListFromEmptyArray :: Test
+getAllEdgesReturnsEmptyListFromEmptyArray = TestCase (assertEqual "getAllEdges [] should return []" [] (getAllEdges []) )
+
+
+getAllEdgesReturnsListOfEdges :: Test
+getAllEdgesReturnsListOfEdges = TestCase (assertEqual "getAllEdges should return all edges of network" all_edges (getAllEdges network) )
+  where 
+      e0 = Edge "zero" 0 1 10
+      e0a = Edge "zero_a" 0 2 15
+      e1 = Edge "one" 1 2 10
+      network = [Node "n_zero" [e0, e0a], Node "n_one" [e1], Node "n_two" []] :: Network
+      all_edges = [e0, e0a, e1]
+
+removeHeavierDuplicatesReturnsEmptyGivenEmpty :: Test
+removeHeavierDuplicatesReturnsEmptyGivenEmpty = TestCase (assertEqual "removeHeavierDuplicates returns empty list if given empty list" [] (removeHeavierDuplicates []))
+
+removeHeavierDuplicatesRemovesNoneIfNoDuplicates :: Test
+removeHeavierDuplicatesRemovesNoneIfNoDuplicates = TestCase (assertEqual "removeHeavierDuplicates removes nothing if no duplicates exist" allEdges (removeHeavierDuplicates allEdges))
+  where
+      allEdges = [Edge "zero" 0 1 10, Edge "zero_a" 0 2 15, Edge "one" 1 2 10]     
+
+removeHeavierDuplicatesRemoves :: Test
+removeHeavierDuplicatesRemoves = TestCase (assertEqual "removeHeavierDuplicates removes heaviest if duplicates exist" [a,c] (removeHeavierDuplicates allEdges))
+  where
+      allEdges = [Edge "zero" 0 1 10, Edge "zero_a" 0 1 15, Edge "one" 1 2 10]   
+      a:_:c:_ = allEdges 
+
+sameEndsFalseOnDiffEnds :: Test
+sameEndsFalseOnDiffEnds = TestCase (assertBool "edges with different ends -> sameEnds = False" (not (sameEnds e0 e1)))
+  where
+      e0 = Edge "zero" 0 1 10
+      e1 = Edge "one" 0 2 15     
+
+sameEndsTrueOnSameEnds :: Test
+sameEndsTrueOnSameEnds = TestCase (assertBool "edges with same ends -> sameEnds = True" (sameEnds e0 e1))
+  where
+      e0 = Edge "zero" 0 1 10
+      e1 = Edge "one" 0 1 15     
+
+
+-- Property Tests
+
 prop_removeHeavierDuplicatesDoesNotReturnLongerList :: [Edge] -> Bool
 prop_removeHeavierDuplicatesDoesNotReturnLongerList edges = length (removeHeavierDuplicates edges) <= length edges
 
@@ -49,47 +94,8 @@ prop_bestPathsReturnsCorrectNumber g paths (IntAtLeastOne num)  = x == length (b
 
 
 
-
---1
-getAllEdgesReturnsEmptyListFromEmptyArray :: Test
-getAllEdgesReturnsEmptyListFromEmptyArray = TestCase (assertEqual "getAllEdges [] should return []" [] (getAllEdges []) )
-
-
-getAllEdgesReturnsListOfEdges :: Test
-getAllEdgesReturnsListOfEdges = TestCase (assertEqual "getAllEdges should return all edges of network" all_edges (getAllEdges network) )
-  where 
-      e0 = Edge "zero" 0 1 10
-      e0a = Edge "zero_a" 0 2 15
-      e1 = Edge "one" 1 2 10
-      network = [Node "n_zero" [e0, e0a], Node "n_one" [e1], Node "n_two" []] :: Network
-      all_edges = [e0, e0a, e1]
-
---2
-removeHeavierDuplicatesRemovesNoneIfNoDuplicates :: Test
-removeHeavierDuplicatesRemovesNoneIfNoDuplicates = TestCase (assertEqual "removeHeavierDuplicates removes nothing if no duplicates exist" allEdges (removeHeavierDuplicates allEdges))
-  where
-      allEdges = [Edge "zero" 0 1 10, Edge "zero_a" 0 2 15, Edge "one" 1 2 10]     
-
-removeHeavierDuplicatesRemoves :: Test
-removeHeavierDuplicatesRemoves = TestCase (assertEqual "removeHeavierDuplicates removes heaviest if duplicates exist" [allEdges!!0,allEdges!!2] (removeHeavierDuplicates allEdges))
-  where
-      allEdges = [Edge "zero" 0 1 10, Edge "zero_a" 0 1 15, Edge "one" 1 2 10]     
-
-sameEndsFalseOnDiffEnds :: Test
-sameEndsFalseOnDiffEnds = TestCase (assertBool "edges with different ends -> sameEnds = False" (not (sameEnds e0 e1)))
-  where
-      e0 = Edge "zero" 0 1 10
-      e1 = Edge "one" 0 2 15     
-
-sameEndsTrueOnSameEnds :: Test
-sameEndsTrueOnSameEnds = TestCase (assertBool "edges with same ends -> sameEnds = True" (sameEnds e0 e1))
-  where
-      e0 = Edge "zero" 0 1 10
-      e1 = Edge "one" 0 1 15     
-
-
 tests :: Test
-tests = TestList [getAllEdgesReturnsListOfEdges, getAllEdgesReturnsListOfEdges, removeHeavierDuplicatesRemovesNoneIfNoDuplicates, sameEndsFalseOnDiffEnds, sameEndsTrueOnSameEnds]
+tests = TestList [getAllEdgesReturnsListOfEdges, getAllEdgesReturnsListOfEdges, removeHeavierDuplicatesRemovesNoneIfNoDuplicates, sameEndsFalseOnDiffEnds, sameEndsTrueOnSameEnds, removeHeavierDuplicatesReturnsEmptyGivenEmpty]
 
 runUnitTests = runTestTT tests
 
